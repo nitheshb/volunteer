@@ -5,7 +5,7 @@ import 'package:test_app_1/ui/screens/home.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
 import 'package:test_app_1/ui/screens/sign_up.dart';
 import 'package:test_app_1/ui/screens/forgot_password.dart';
-import 'package:test_app_1/pages/firebaseDemo.dart';
+import 'package:test_app_1/pages/Admin/add_matches_P.dart';
 
 
 
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         '/signin': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),
         '/forgot-password': (context) => ForgotPasswordScreen(),
-        '/add_matches': (context) => FireBaseFireStoreDemo(),
+        '/add_matches': (context) => AddMatchesP(),
         
       },
     );

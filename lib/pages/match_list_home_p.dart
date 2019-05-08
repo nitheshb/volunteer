@@ -21,6 +21,13 @@ class _ListPageState extends State<MatchListP> {
     super.initState();
   }
 
+   // Perform login or signup
+  void _logout()  {
+    print("logout pressed");
+    widget.auth.signOut();
+
+     
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +50,9 @@ final topAppBar = AppBar(
         IconButton(
           icon: Icon(Icons.list),
           onPressed: () {
+             void _logout()  {    
+     
+  }
           },
                   )
                 ],
