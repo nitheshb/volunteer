@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "92289914084",
+    "firebase_url": "https://teamplayers-f3b25.firebaseio.com",
+    "project_id": "teamplayers-f3b25",
+    "storage_bucket": "teamplayers-f3b25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92289914084:android:fabb0f7b452a7e23",
+        "android_client_info": {
+          "package_name": "com.example.test_app_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "92289914084-mjeh13lvk44bklae8agqv3oo87cp2bpd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBF0PtwYMHa45jAzXUTz1fXWbsIjJM6Ch4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "92289914084-mjeh13lvk44bklae8agqv3oo87cp2bpd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "92289914084-7af9o5l5svs6ol90h9v7c4isckpsdq9t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.firetest2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
