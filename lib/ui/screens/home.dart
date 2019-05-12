@@ -1,12 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:test_app_1/models/state.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:test_app_1/ui/screens/fixtures.dart';
 import 'package:test_app_1/util/state_widget.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
+import 'package:test_app_1/utils/imagesU.dart';
 import 'package:test_app_1/ui/widgets/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:test_app_1/utils/screen_size.dart';
 import 'package:test_app_1/Interfaces/matches_I.dart';
 import 'package:test_app_1/pages/fan_player_select_P.dart';
 import 'package:test_app_1/pages/bid_player_select_p.dart';
+import 'package:test_app_1/widgets/donut_charts.dart';
+import 'package:test_app_1/widgets/wave_progress.dart';
+
+var data = [
+  new DataPerItem('Home', 35, Colors.greenAccent),
+  new DataPerItem('Food & Drink', 25, Colors.yellow),
+  new DataPerItem('Hotel & Restaurant', 24, Colors.indigo),
+  new DataPerItem('Travelling', 40, Colors.pinkAccent),
+];
+
+var series = [
+  new charts.Series(
+    domainFn: (DataPerItem clickData, _) => clickData.name,
+    measureFn: (DataPerItem clickData, _) => clickData.percent,
+    colorFn: (DataPerItem clickData, _) => clickData.color,
+    id: 'Item',
+    data: data,
+  ),
+];
+
+class CImages {
+  CImages({this.image});
+  String image;
+}
+
+final List<CImages> _cImages = <CImages>[
+  CImages(image: 'assets/images/img2.gif'),
+  CImages(image: 'assets/images/img3.png'),
+  CImages(image: 'assets/images/img4.jpg'),
+  CImages(image: 'assets/images/img1.png'),
+];
+
 class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -19,79 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
   }
-   getMatches() {
-    return Firestore.instance.collection(collectionName).snapshots();
-  }
-  delete(MatchesI user) {
-    Firestore.instance.runTransaction(
-      (Transaction transaction) async {
-        await transaction.delete(user.reference);
-      },
-    );
-  }
 
-   Widget buildBody(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: getMatches(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error ${snapshot.error}');
-        }
-        if (snapshot.hasData) {
-          print("Documents ${snapshot.data.documents.length}");
-          return buildList(context, snapshot.data.documents);
-        }
-        return CircularProgressIndicator();
-      },
-    );
-  }
-
-  Widget buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-    return ListView(
-      children: snapshot.map((data) => buildListItem(context, data)).toList(),
-    );
-  }
-
-  Widget buildListItem(BuildContext context, DocumentSnapshot data) {
-    final user = MatchesI.fromSnapshot(data);
-    return Padding(
-      key: ValueKey(user.title),
-      padding: EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: ListTile(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              // move to other screen
-              _send2BidScreen(context);
-                          },
-
-          ),
-          title: Text(user.title),
-          trailing: IconButton(
-            icon: Icon(Icons.arrow_forward),
-            onPressed: () {
-              // move to other screen
-              _send2FanSelectScreen(context, user);
-                          },
-                        ),
-                        onTap: () {
-                          // update
-                          print("its seleted");
-                        },
-                      ),
-                    ),
-                  );
-                }
-              
-              
-              
-              
-                Widget build(BuildContext context) {
+                    
+    Widget build(BuildContext context) {
                   appState = StateWidget.of(context).state;
                   if (!appState.isLoading &&
                       (appState.firebaseUserAuth == null ||
@@ -104,205 +70,173 @@ class _HomeScreenState extends State<HomeScreen> {
                     } else {
                       _loadingVisible = false;
                     }
-                    final logo = Hero(
-                      tag: 'hero',
-                      child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 60.0,
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/default.png',
-                              fit: BoxFit.cover,
-                              width: 120.0,
-                              height: 120.0,
-                            ),
-                          )),
-                    );
-              
-                    final signOutButton = Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
+
+                    return new DefaultTabController (
+                      length:4,
+                      child: Scaffold(
+                        appBar:  AppBar(
+                          backgroundColor: Color(0xFF0B4FFD),
+                          actions: <Widget>[
+                            Row(children: <Widget>[
+                              Container(
+                                height: 100.0,
+                                width: 150.0,
+                                padding: const EdgeInsets.all(5.0),
+                                color: Color(0xFF0B4FFD),
+                                child: Image.asset('logo'),
+                              ),
+                              SizedBox(width:130.0),
+                              IconButton(
+                                onPressed: () {
+                                  debugPrint("Notification Tapped");
+                                },
+                                icon: Icon(Icons.notifications),
+                              )
+                            ],)
+                          ],
+                          bottom: TabBar(
+                            isScrollable: true,
+                            tabs: <Widget>[
+                              Tab(text: "CRICKET"), 
+                              Tab(text: "KABADDI"), 
+                              Tab(text: "NBA"), 
+                              Tab(text: "FOOTBALL"), 
+                            ],
+                          )
                         ),
-                        onPressed: () {
-                          StateWidget.of(context).logOutUser();
-                        },
-                        padding: EdgeInsets.all(12),
-                        color: Theme.of(context).primaryColor,
-                        child: Text('SIGN OUT', style: TextStyle(color: Colors.white)),
-                      ),
-                    );
-              
-                    final forgotLabel = FlatButton(
-                      child: Text(
-                        'Forgot password?',
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/forgot-password');
-                      },
-                    );
-              
-                    final signUpLabel = FlatButton(
-                      child: Text(
-                        'Sign Up',
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/signup');
-                      },
-                    );
-              
-                    final signInLabel = FlatButton(
-                      child: Text(
-                        'Sign In',
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/signin');
-                      },
-                    );
-                    
-                    final CrudPage = FlatButton(
-                      child: Text(
-                        'CRUD PAGE',
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/add_matches');
-                      },
-                    );
-              
-                    final topAppBar = AppBar(
-                    elevation: 0.1,
-                    backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-                    title: Text("Matches(H)"),
-                    actions: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.exit_to_app),
-                        onPressed: () {
-                          StateWidget.of(context).logOutUser();
-                        },
+                        body: Stack(children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                height:  160.0,
+                                color: Colors.grey[350],
+                                child: ListView.builder(
+                                  
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount:  _cImages.length,
+                                  itemBuilder: (BuildContext context, int index){
+                                    return Container(
+                                      child: Card(
+                                        elevation: 2.0,
+                                        child: Container(
+                                          height: 150.0,
+                                          width: 350.0,
+                                          child: Image.asset(_cImages[index].image,fit: BoxFit.fill,),
+                                          // fit: BoxFit.fill
+                                        ),
+                                      )
+                                    );
+
+                                  },
                                 )
-                              ],
-                            );
-              
-                    
-                            
-                        final makeBottom = Container(
-                              height: 55.0,
-                              child: BottomAppBar(
-                                color: Color.fromRGBO(58, 66, 86, 1.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(Icons.home, color: Colors.white),
-                                      onPressed: () {},
+                              ),
+                              Material(
+                                elevation: 5.0,
+                                child: Container(
+                                  decoration: BoxDecoration(),
+                                  child: TabBar(
+                                    indicator: UnderlineTabIndicator(
+                                      borderSide: BorderSide(
+                                       width:2.0
+                                      )
                                     ),
-                                    IconButton(
-                                      icon: Icon(Icons.blur_on, color: Colors.white),
-                                      onPressed: () {},
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.flash_on, color: Colors.white),
-                                      onPressed: () {
-                                        Navigator.pushNamed(context, '/add_matches');
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.account_box, color: Colors.white),
-                                      onPressed: () {},
-                                    )
-                                  ],
+                                    labelColor: Colors.blueGrey,
+                                    tabs: [
+                                      Tab(
+                                        text: "FIXTURES"
+                                      ),
+                                      Tab(
+                                        text: "LIVE"
+                                      ),
+                                      Tab(
+                                        text: "RESULTS"
+                                      )
+                                    ]
+                                  )
                                 ),
                               ),
-                            );
-              //check for null https://stackoverflow.com/questions/49775261/check-null-in-ternary-operation
-                    // final userId = appState?.firebaseUserAuth?.uid ?? '';
-                    // final email = appState?.firebaseUserAuth?.email ?? '';
-                    // final firstName = appState?.user?.firstName ?? '';
-                    // final lastName = appState?.user?.lastName ?? '';
-                    // final settingsId = appState?.settings?.settingsId ?? '';
-                    // final userIdLabel = Text('App Id: ');
-                    // final emailLabel = Text('Email: ');
-                    // final firstNameLabel = Text('First Name: ');
-                    // final lastNameLabel = Text('Last Name: ');
-                    // final settingsIdLabel = Text('SetttingsId: ');
-              
-                    // final makeBody = LoadingScreen(
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.symmetric(horizontal: 48.0),
-                    //         child: Center(
-                    //           child: SingleChildScrollView(
-                    //             child: Column(
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               crossAxisAlignment: CrossAxisAlignment.stretch,
-                    //               children: <Widget>[
-                    //                 logo,
-                    //                 SizedBox(height: 48.0),
-                    //                 userIdLabel,
-                    //                 Text(userId,
-                    //                     style: TextStyle(fontWeight: FontWeight.bold)),
-                    //                 SizedBox(height: 12.0),
-                    //                 emailLabel,
-                    //                 Text(email,
-                    //                     style: TextStyle(fontWeight: FontWeight.bold)),
-                    //                 SizedBox(height: 12.0),
-                    //                 firstNameLabel,
-                    //                 Text(firstName,
-                    //                     style: TextStyle(fontWeight: FontWeight.bold)),
-                    //                 SizedBox(height: 12.0),
-                    //                 lastNameLabel,
-                    //                 Text(lastName,
-                    //                     style: TextStyle(fontWeight: FontWeight.bold)),
-                    //                 SizedBox(height: 12.0),
-                    //                 settingsIdLabel,
-                    //                 Text(settingsId,
-                    //                     style: TextStyle(fontWeight: FontWeight.bold)),
-                    //                 SizedBox(height: 12.0),
-                    //                 signOutButton,
-                    //                 signInLabel,
-                    //                 signUpLabel,
-                    //                 forgotLabel,
-                    //                 CrudPage,
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       inAsyncCall: _loadingVisible),
-                    // );
-              
-                    return Scaffold(
-                      backgroundColor: Colors.white,
-                      appBar: topAppBar,
-                      body: buildBody(context),
-                      bottomNavigationBar: makeBottom,
+                              SizedBox(height: 25.0,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                Text("Pick an Upcoming match", style: TextStyle(color: Colors.grey[600])),
+                                
+                              ],),
+                              
+                              Expanded(child: Container(
+                                child: ListView.builder(
+                                  padding: const EdgeInsets.all(20.0),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: 6,
+                                  itemBuilder: (BuildContext context, int index){
+                                    return new GestureDetector(
+                                      onTap: (){
+                                      Navigator.pushNamed(context, "/fixtures");
+                                    },
+                                   child: Container (
+                                      height: 100.0,
+                                      width: 188.0,
+                                      child: Card(child: 
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Image.asset("assets/images/i.png", height: 100.0,
+                                              width: 80.0),
+                        
+                                            ],),
+                                            Column(
+                                              crossAxisAlignment:  CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text("Indian T20 League"),
+                                                SizedBox(height: 10.0,),
+                                                Text("vs"),
+                                                SizedBox(height: 10.0,),
+                                                Row(
+                              
+                                                  children: [
+                                                    Container(
+                                                      child: Text("07h 10m 27s")
+                                                    )
+                                                    
+                                                  ]
+                                                  )
+                                              ],
+                                            ),
+                                            Row(
+                                            children: <Widget>[
+                                              Image.asset("assets/images/i.png",height: 100.0,
+                                              width: 80.0),
+                                              
+                                            ],
+                                            )
+                                        ],
+                                      )
+                                      ),
+                                    )
+                                    );
+                                  },
+                                ),
+                              ),)
+                            ],
+                          ),
+
+                        ],
+                        )
+                      )
+                      
                     );
+        
+              
+            
                   }
                 }
-                
               }
-              
-        // get the text in the TextField and start the Second Screen
-  void _send2FanSelectScreen(BuildContext context, user) {
-    String textToSend = user.title;
-    print("check");
-    print(user.team);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SecondScreen(text: textToSend, team: user.team),
-        ));
-  }
 
-  void _send2BidScreen(BuildContext context) {
-    String textToSend = "sample text passed";
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BidPlayerSelectP(text: textToSend,),
-        ));
-  }
+
+
+ 

@@ -31,10 +31,10 @@ class _SignInScreenState extends State<SignInScreen> {
           radius: 60.0,
           child: ClipOval(
             child: Image.asset(
-              'assets/images/default.png',
+              'assets/images/i.png',
               fit: BoxFit.cover,
-              width: 120.0,
-              height: 120.0,
+              width: 200.0,
+              height: 200.0,
             ),
           )),
     );
@@ -89,7 +89,7 @@ class _SignInScreenState extends State<SignInScreen> {
         },
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
-        child: Text('SIGN IN', style: TextStyle(color: Colors.white)),
+        child: Text('Log In', style: TextStyle(color: Colors.white)),
       ),
     );
 

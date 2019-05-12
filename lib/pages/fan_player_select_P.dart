@@ -116,48 +116,53 @@ class _SecondScreenState extends State<SecondScreen> {
                     }
                     print("fetching user value ${appState?.firebaseUserAuth?.uid ?? ''}");
                   }
-    return Scaffold(
-      appBar: AppBar(title: Text('Fan Team Select'),
-      ),
-      body: Column(children: [
+    return  MaterialApp(
+      home: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(text: "BAT",),
+                Tab(text: "BOW"),
+                Tab(text: "AR"),
+                Tab(text: "WK"),
+              ],
+            ),
+            title: Text('Fav Players Selection'),
+          ),
+          body: TabBarView(
+            children: [
+              //  TODO: put this in widget....... end of block also mentioned
+              Column(children: [
               Expanded(child: new ListView.builder(
-                
+          padding: const EdgeInsets.all(20.0),
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,     
           itemCount: widget.team.length,
-          itemBuilder: (context, index){
-            return new ListTile(
-              leading: new Icon(Icons.flag),
-              title: new Text(widget.team[index]["player_name"]),
-              subtitle: Row(
-                      children: <Widget>[
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                              // tag: 'hero',
-                              child: Padding(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Text(widget.team[index]["base_price"].toString(),
-                                  style: TextStyle(color: Colors.red))),
-                              
-                            )),
-                        Expanded(
-                          flex: 4,
-                          child: LinearProgressIndicator(
-                                  backgroundColor: Color.fromRGBO(209, 224, 224, 0.2),
-                                  value: (widget.team[index]["base_price"])/100,
-                                  valueColor: AlwaysStoppedAnimation(Colors.green)),
-                        )
-                      ],
-                    ),
-              trailing: IconButton(
+          itemBuilder: (BuildContext context, index){
+           return new  Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.grey.shade800,
+            backgroundImage: NetworkImage("https://d13ir53smqqeyp.cloudfront.net/player-images/1343.png"),
+          ),
+        title: Text(widget.team[index]["player_name"],style: TextStyle(
+      fontSize: 20.0, // insert your font size here
+    ),),
+        subtitle: Text(widget.team[index]["base_price"].toString()),
+        trailing: IconButton(
             icon: Icon(MyfavPlayers.contains(widget.team[index]) == true ? Icons.favorite : Icons.favorite_border),
-            color: Colors.red,
+            color: Colors.blue,
+            iconSize: 35,
+            tooltip: 'Second screen',
             onPressed: () {
               // move to other screen
               addToFav(context, widget.team[index]);
-                                                      },
-                                                    ),
-                                          );
-                                          
+            },
+      ),
+      ),
+    );                                    
                                       },
                                     ),),
                                      Container(
@@ -171,9 +176,18 @@ class _SecondScreenState extends State<SecondScreen> {
                                                   addMatche();
                                                   },
                                                   child: Text("Save This Team $myTotalBidLimit"))),
-                                        ])
-                                );
-                              }
+                                        ]),
+
+                                        // TODO: end of block to mention in App
+              Icon(Icons.directions_transit),
+              Icon(Icons.directions_bike),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+                              
               
                 void addToFav(BuildContext context, team) {
                  print("team is");
@@ -194,8 +208,16 @@ class _SecondScreenState extends State<SecondScreen> {
     print("fav is");
                  print(MyfavPlayers);
                 }
+
+      Widget PlayersListDisplayW(BuildContext context, List PlayersList){
+
+      }          
               
               }
+
+
+
+
               
 //               void AddToFav(BuildContext context, team) {
 // setState(() {

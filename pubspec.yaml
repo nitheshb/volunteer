@@ -36,6 +36,8 @@ dependencies:
   shared_preferences: any
   flushbar: ^1.3.1
   fluttertoast:
+  charts_flutter: ^0.6.0
+  razorpay_plugin: ^0.2.9
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +63,8 @@ flutter:
     - assets/flutter-icon.png
     - drive-steering-wheel.jpg
     - line.png
+    - assets/images/
+    - assets/images/users/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
@@ -93,3 +97,8 @@ flutter:
         - asset: fonts/Raleway-Regular.ttf
         - asset: fonts/Raleway-Thin.ttf
           style: normal
+
+  # fonts:
+  #   - family: Varela
+  #     fonts:
+  #       - asset: assets/fonts/VarelaRound-Regular.ttf
