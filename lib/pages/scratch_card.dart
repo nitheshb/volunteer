@@ -25,7 +25,8 @@ class ScratchCardP extends StatelessWidget {
                       children: <Widget>[
                         Image.asset(
                           'assets/images/scratchCard.jpg',
-                          repeat: ImageRepeat.repeat,
+                          
+                          fit: BoxFit.fill,
                         ),
                         Center(
                           child: Text(

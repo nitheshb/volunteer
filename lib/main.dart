@@ -11,6 +11,7 @@ import 'package:test_app_1/ui/screens/sign_in.dart';
 import 'package:test_app_1/ui/screens/sign_up.dart';
 import 'package:test_app_1/ui/screens/forgot_password.dart';
 import 'package:test_app_1/pages/Admin/add_matches_P.dart';
+import 'package:test_app_1/services/authentication.dart';
 
 
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/wallet_home': (context) => WalletHome(),
         '/razorPay_home': (context) => RazorPayHome(),
         '/scratchCard': (context) => ScratchCardP(),
-        '/fixtures': (context) => FixturesScreen(),
+        '/fixtures': (context) => FixturesScreen(auth: new Auth()),
         '/auctionHome': (context)=> AuctionHome(),
         
       },

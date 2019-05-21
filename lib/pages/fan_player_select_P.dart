@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app_1/util/state_widget.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
@@ -18,7 +21,7 @@ class SecondScreen extends StatefulWidget {
 class _SecondScreenState extends State<SecondScreen> {  
   StateModel appState;
   int myTotalBidLimit;
-  String collectionName = "FanMatches";
+  String collectionName = "TodayFixtures";
   bool isEditing = false;
   List MyfavPlayers;
   bool _loadingVisible = false;
@@ -38,31 +41,53 @@ class _SecondScreenState extends State<SecondScreen> {
     return Firestore.instance.collection(collectionName).snapshots();
   }
 
-  addMatche() {
-    final userId = appState?.firebaseUserAuth?.uid ?? '';
-    final email = appState?.firebaseUserAuth?.email ?? '';
-                    final firstName = appState?.user?.firstName ?? '';
-                    final lastName = appState?.user?.lastName ?? '';
-                    final settingsId = appState?.settings?.settingsId ?? '';
-    print(userId);
-    print(email);
-    print(firstName);
-    print(lastName);
-    if(userId == ''){
-      print("------------------------------>Nithesh");
-      print("user is not signed... redirect him to login page");
-    } else {
-    // Map<dynamic> user = MyfavPlayers;
-    try {
-           Firestore.instance
-              .collection(collectionName)
-              .document()
-              // .updateData({"data": MyfavPlayers});
-              .setData({userId: MyfavPlayers});
-    } catch (e) {
-      print(e.toString());
-    }
-  }
+  addMatche() async {
+ print("ghhhh");
+ print(MyfavPlayers);
+try{
+  print("processing azure api");
+  var body = json.encode({
+  "p_sale_gross": MyfavPlayers
+});
+    var url = 'https://xsports.azurewebsites.net/api/HttpTrigger1';
+var response = await http.post(url, body: body);
+print('Response status: ${response.statusCode}');
+print('Response body: ${response.body}');
+}
+catch(e){
+  print(e);
+}
+
+
+//     final userId = appState?.firebaseUserAuth?.uid ?? '';
+//     final email = appState?.firebaseUserAuth?.email ?? '';
+//                     final firstName = appState?.user?.firstName ?? '';
+//                     final lastName = appState?.user?.lastName ?? '';
+//                     final settingsId = appState?.settings?.settingsId ?? '';
+//     print(userId);
+//     print(email);
+//     print(firstName);
+//     print(lastName);
+//     if(userId == ''){
+//       print("------------------------------>Nithesh");
+//       print("user is not signed... redirect him to login page");
+//     } else {
+//       print("inside this");
+//     // Map<dynamic> user = MyfavPlayers;
+//     try {
+//       var url = 'https://xsports.azurewebsites.net/api/HttpTrigger1';
+// var response = await http.post(url, body: {'p_sale_gross': "300", 'color': 'blue'});
+// print('Response status: ${response}');
+// print('Response body: ${response}');
+//           //  Firestore.instance
+//           //     .collection(collectionName)
+//           //     .document()
+//           //     // .updateData({"data": MyfavPlayers});
+//           //     .setData({userId: MyfavPlayers});
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
   
   }
 

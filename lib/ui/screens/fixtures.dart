@@ -11,6 +11,15 @@ import 'package:test_app_1/pages/fan_player_select_P.dart';
 import 'package:test_app_1/pages/bid_player_select_p.dart';
 import 'package:test_app_1/widgets/donut_charts.dart';
 import 'package:test_app_1/widgets/wave_progress.dart';
+import 'package:test_app_1/utils/fire_db_help_file.dart';
+import 'package:test_app_1/services/authentication.dart';
+import 'package:test_app_1/pages/auction_homeP.dart';
+
+
+// check for logged in user details and signin
+import 'package:test_app_1/models/state.dart';
+import 'package:test_app_1/util/state_widget.dart';
+import 'package:test_app_1/ui/screens/sign_in.dart';
 
 var data = [
   new DataPerItem('Home', 35, Colors.greenAccent),
@@ -30,13 +39,18 @@ var series = [
 ];
 
 class FixturesScreen extends StatefulWidget {
+  FixturesScreen({this.auth});
+  final BaseAuth auth;
   _FixturesScreenState createState() => _FixturesScreenState();
 }
 
 class _FixturesScreenState extends State<FixturesScreen> {
   StateModel appState;
   bool _loadingVisible = false;
-  String collectionName = "Matches";
+  String collectionName = "TodayFixtures";
+  String LiveBidCollection = "LiveBids";
+  
+
   @override
   void initState() {
     super.initState();
@@ -60,7 +74,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
           return Text('Error ${snapshot.error}');
         }
         if (snapshot.hasData) {
-          print("Documents ${snapshot.data.documents.length}");
+          print("Documents of fixtures ${snapshot.data.documents.length}");
           return buildList(context, snapshot.data.documents);
         }
         return CircularProgressIndicator();
@@ -76,6 +90,8 @@ class _FixturesScreenState extends State<FixturesScreen> {
 
   Widget buildListItem(BuildContext context, DocumentSnapshot data) {
     final user = MatchesI.fromSnapshot(data);
+    print("user is");
+    print(user);
     // return Column(
     //  children: <Widget>[
     //    vaweCard(context ,data, Colors.grey.shade100, Color(0xFF716cff))
@@ -92,52 +108,6 @@ class _FixturesScreenState extends State<FixturesScreen> {
       ),
     )
     );
-    // return Container(
-    //   child: Padding(
-    //   key: ValueKey(user.title),
-    //   padding: EdgeInsets.symmetric(vertical: 20.0,horizontal: 20.0),
-    //   child: Container(
-    //     decoration: BoxDecoration(
-    //     color: Colors.white,
-    //     borderRadius: BorderRadius.circular(6),
-    //     boxShadow: [
-    //       BoxShadow(
-    //         color: Colors.grey.shade100,
-    //         blurRadius: 6,
-    //         spreadRadius: 10,
-    //       )
-    //     ],
-    //   ),
-    //     child: ListTile(
-    //       leading: IconButton(
-    //         icon: Icon(Icons.arrow_back),
-    //         onPressed: () {
-    //           // move to other screen
-    //           _send2BidScreen(context);
-    //                       },
-
-    //       ),
-    //       title: Stack( 
-    //         alignment: Alignment.center,
-    //         children:<Widget>[
-    //         Text(user.title)
-    //       ]
-    //         ),
-    //       trailing: IconButton(
-    //         icon: Icon(Icons.arrow_forward),
-    //         onPressed: () {
-    //           // move to other screen
-    //           _send2FanSelectScreen(context, user);
-    //                       },
-    //                     ),
-    //                     onTap: () {
-    //                       // update
-    //                       print("its seleted");
-    //                     },
-    //                   ),
-    //                 ),
-    //   )
-    //               );
                 }
               
               
@@ -252,14 +222,16 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     IconButton(
-                                      icon: Icon(Icons.home, color: Colors.white),
+                                      icon: Icon(Icons.account_balance_wallet, color: Colors.white),
                                       onPressed: () { 
                                         Navigator.pushNamed(context, '/wallet_home');
                                       },
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.blur_on, color: Colors.white),
-                                      onPressed: () {},
+                                      icon: Icon(Icons.card_giftcard, color: Colors.white),
+                                      onPressed: () {
+                                        Navigator.pushNamed(context, '/scratchCard');
+                                      },
                                     ),
                                     IconButton(
                                       icon: Icon(Icons.flash_on, color: Colors.white),
@@ -268,7 +240,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                       },
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.account_box, color: Colors.white),
+                                      icon: Icon(Icons.blur_on, color: Colors.white),
                                       onPressed: () {},
                                     )
                                   ],
@@ -344,6 +316,8 @@ class _FixturesScreenState extends State<FixturesScreen> {
 
 
     Widget makeListTile(BuildContext context, data) {
+      print("data is");
+      print(data);
       return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
         leading: Container(
@@ -355,7 +329,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               // move to other screen
-              _send2BidScreen(context);
+              _send2BidScreen(context,data);
                           }
           ),
         ),
@@ -370,12 +344,6 @@ class _FixturesScreenState extends State<FixturesScreen> {
           data.title,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-         Row(
-          children: <Widget>[
-            Icon(Icons.linear_scale, color: Colors.yellowAccent),
-            Text(" Intermediate", style: TextStyle(color: Colors.white))
-          ]
-        )
             ]
 
           )
@@ -461,14 +429,36 @@ class _FixturesScreenState extends State<FixturesScreen> {
       ),
     );
   }  
+
+
+void loginCheck(BuildContext context){
+        final userId = appState?.firebaseUserAuth?.uid ?? '';
+    final email = appState?.firebaseUserAuth?.email ?? '';
+                    final firstName = appState?.user?.firstName ?? '';
+                    final lastName = appState?.user?.lastName ?? '';
+                    final settingsId = appState?.settings?.settingsId ?? '';
+    print(userId);
+    print(email);
+    print(firstName);
+    print(lastName);
+    if(userId == ''){
+      print("------------------------------>Nithesh");
+      print("user is not signed... redirect him to login page");
+    } else { 
+  print("this is login check for page called fixtures");
+}
+
+  }
+
                 
-              }
+              
               
         // get the text in the TextField and start the Second Screen
   void _send2FanSelectScreen(BuildContext context, user) {
     String textToSend = user.title;
-    print("check");
-    print(user.team);
+    print("check 123");
+    print(user.title);
+    print(user);
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -476,12 +466,57 @@ class _FixturesScreenState extends State<FixturesScreen> {
         ));
   }
 
-  void _send2BidScreen(BuildContext context) {
-    String textToSend = "sample text passed";
-    Navigator.pushNamed(context, "/auctionHome");
+  void _send2BidScreen(BuildContext context, teamData) async {
+
+    // step 1: check if user is logged in 
+
+      final userId = appState?.firebaseUserAuth?.uid ?? '';
+    final email = appState?.firebaseUserAuth?.email ?? '';
+    final firstName = appState?.user?.firstName ?? '';
+
+     if(userId == ''){
+      print("------------------------------>Nithesh");
+      print("user is not signed... redirect him to login page");
+    } else {
+
+    // insert data to  LiveBid Table
+    // {bidprice: 0, currentHighestBidder, maxamount: 100, maxplayers: 3, bidId:?, 
+    // bidders: [{name:nithesh, remainingAmount 100,playersSelected: [{player_name: kohli}]}]}
+    List biddersPool = [ { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":firstName},{ "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"NITHESH(h)"}];
+    Object bidderInfo= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":firstName};
+    Object bidderInfo1= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"NITHESH(h)"};
+    Object bidderInfo2= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"JEEVAN(H)"};
+    // biddersPool.addAll(bidderInfo);
+    // biddersPool.addAll(bidderInfo1);
+    // biddersPool.addAll(bidderInfo2);
+  print("check of values $teamData");
+  print("check of values teamData ${teamData.title}");
+
+  LiveBidI user = LiveBidI(bidId: "001_Static", maxPlayers: 4, positions: "_positions.text",matchId: teamData.title, team: teamData.team,bidders:bidderInfo, bidderDetails: biddersPool );
+
+    addData2Fire("LiveBidPool", user).then((onValue){
+      print("check for inserted uid $onValue");
+
+
+        Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AuctionHome(bidTableId: onValue,),
+        ));
+    });
+
+
+        
+    // String textToSend = "sample text passed";
+ 
+
+
     // Navigator.push(
     //     context,
     //     MaterialPageRoute(
     //       builder: (context) => BidPlayerSelectP(text: textToSend,),
     //     ));
   }
+  }
+
+}
