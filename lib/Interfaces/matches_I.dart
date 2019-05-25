@@ -31,22 +31,24 @@ class MatchesI {
 
 
 class LiveBidI {
-  String bidId, positions,status,matchId, bidType;
-  List team;
+  String bidId, positions,status,matchId, bidType, bidStatus;
+  List team,skippedPlayer;
   List bidderDetails;
 
   // this is supposted to be changed as list type
   Map bidders;
-  int maxPlayers;
+  int maxPlayers, currentBidPlayerIndex;
 
   DocumentReference reference;
 
-  LiveBidI({this.bidId,this.maxPlayers,this.positions,this.matchId, this.team, this.bidType, this.bidders, this.bidderDetails});
+  LiveBidI({this.bidId,this.maxPlayers,this.currentBidPlayerIndex, this.skippedPlayer, this.bidStatus,this.positions,this.matchId, this.team, this.bidType, this.bidders, this.bidderDetails});
 
   LiveBidI.fromMap(Map<String, dynamic> map, {this.reference}) {
     bidId = map["bidId"];
     maxPlayers = map["maxPlayers"];
     positions = map["positions"];
+    currentBidPlayerIndex = map["currentBidPlayerIndex"];
+    skippedPlayer = map["skippedPlayer"];
     matchId = map["matchId"];
     team = map["team"];
     bidType = map["bid_type"];
@@ -58,6 +60,6 @@ class LiveBidI {
       : this.fromMap(snapshot.data, reference: snapshot.reference);
 
   toJson() {
-    return {'bidId': bidId,'maxPlayers': maxPlayers, 'positions': positions,'matchId': matchId, 'bid_type': bidType, 'team': team, 'bidders': bidders, "bidderDetails": bidderDetails };
+    return {'bidId': bidId,'maxPlayers': maxPlayers, 'positions': positions, 'sportPlayerIndex': currentBidPlayerIndex, 'skippedPlayers': skippedPlayer,'matchId': matchId, 'bid_type': bidType, 'team': team, 'bidders': bidders, "bidderDetails": bidderDetails };
   }
 }

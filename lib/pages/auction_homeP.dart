@@ -45,13 +45,20 @@ class AuctionHomeState extends State<AuctionHome> with TickerProviderStateMixin 
   Animation scoreOutPositionAnimation, sparklesAnimation;
 
 
-  String collectionName = "LiveBid";
+  String collectionName = "LiveBidPool";
   List MyBidPlayers;
   bool _loadingVisible = false;
 
+  DocumentSnapshot results;
+
   int myTotalBidLimit;  // backing data
   List myfavPlayers;
-  List<String> _data = ['Sun', 'Moon', 'Star'];
+  // List<String> _data = ['Sun', 'Moon', 'Star'];
+  List _data =[];
+  List _data1 =[{"bidderFirstName": "Sun1"}, {"bidderFirstName": "Moon1"}, {"bidderFirstName": "Star"}, {"bidderFirstName": "Mars"}];
+  // List TeamPlayer= [{"base_price": 10, "id": "505l8Eup4NxAq1tpWioY", "player_name": "Ranatunga12", "category": "Batsmen", "team_name": "Srilanka", "points": "5"}, {"base_price": 10, "id": "phG1enf7kELGqcBJxCQP", "player_name": "Sangakara13", "category": "WK", "team_name": "srilanka", "points": 5}];
+ List TeamPlayer, biddersArray;
+ Stream biddersSnap;
   Timer _timer;
   int _start = 10;
   // temp stats
@@ -68,6 +75,8 @@ void initState() {
     MyBidPlayers = [];
     myTotalBidLimit = 100;
     myfavPlayers=[];
+    TeamPlayer = [];
+    biddersArray = [];
     super.initState();
     random = new Random();
     _showPersBottomSheetCallBack = _showBottomSheet;
@@ -76,6 +85,23 @@ void initState() {
       setState(() {}); // Calls render function
     });
 
+   biddersSnap =  Firestore.instance.collection(collectionName).document(widget.bidTableId).snapshots();
+    
+    print("values of snap snap snap ===> ${biddersSnap}");
+  // check for snap 
+    // Firestore.instance.collection(collectionName).document(widget.bidTableId).snapshots();
+
+
+   Firestore.instance.collection(collectionName).document(widget.bidTableId).get().then((onValue){
+     print(" why checerrrrrrrrrrrrrr ${onValue['team']}");
+     setState(() {
+      results = onValue; 
+      TeamPlayer = results.data['team'];
+      biddersArray = results.data['bidderDetails'];
+      _data = results.data['bidderDetails'];
+     });
+     print("----->retrivedd1 values are ${_data}");
+   });
 
 
 scoreOutAnimationController = new AnimationController(vsync: this, duration: duration);
@@ -107,6 +133,60 @@ scoreOutAnimationController = new AnimationController(vsync: this, duration: dur
       setState(() { });
     });
 
+  }
+
+getBidders(){
+  return Firestore.instance.collection(collectionName).document(widget.bidTableId).snapshots();
+}
+  getBidderDetails(){
+      return StreamBuilder<DocumentSnapshot>(
+        stream: getBidders(),
+        builder: (context, snapshot){
+          if(snapshot.hasData != null){
+            return ListView.builder(
+              primary: false,
+              shrinkWrap: true,
+              itemCount: snapshot.data.data['bidderDetails'].length,
+              itemBuilder: (context, index){
+                print("---> truee1 checker ${snapshot.data.data['bidderDetails']}");
+                return new Column(children: <Widget>[
+                  Card( //                           <-- Card widget
+            child: ListTile(
+              // leading: Icon(icons[index]),
+              title: Text(snapshot.data.data['bidderDetails'][index]['bidderFirstName']),
+              trailing: Column(
+                          children: <Widget>[
+                            Visibility(
+                          child: new IconButton(
+                          icon: Icon(Icons.exit_to_app,color: Colors.green,
+                        ),
+                        onPressed: (){
+                          _removeThisBidder(snapshot.data.data[index]);
+                        },
+                        ),
+                        visible: snapshot.data.data['bidderDetails'][index]['bidderFirstName'] != currentHighestBidder ,
+                        ),
+                        Visibility(
+                        child: new Text("$_start"),
+                        visible: snapshot.data.data['bidderDetails'][index]['bidderFirstName'] == currentBidder ,
+                        ),
+                          ],
+                        ),
+            ),
+          )
+
+                ]);
+              },  
+            );
+          }
+          else{
+            Text("error check...");
+          }
+
+          
+        }
+      );
+  
   }
   
 
@@ -223,7 +303,7 @@ void dispose() {
                         padding: EdgeInsets.only(bottom: 10),
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: getCreditCards().length,
+                        itemCount: TeamPlayer.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: EdgeInsets.only(right: 10),
@@ -243,7 +323,7 @@ void dispose() {
                                             children: <Widget>[
                                               Image.asset("assets/images/dhoni.jpg",height: screenAwareSize(110, context),
                                               width: screenAwareSize(110, context), ),
-                                              Text("Dhoni")
+                                              Text(TeamPlayer[index]['player_name'])
                                               
                                             ],
                                             ),
@@ -355,31 +435,70 @@ void dispose() {
                  Padding(
                   padding: const EdgeInsets.only(
                       left: 25.0, bottom: 15, right: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                      },
-                      child: SizedBox(
-                        height: 300,
-                        child: AnimatedList(
-                          // Give the Animated list the global key
-                          key: _listKey,
-                          initialItemCount: _data.length,
-                          // Similar to ListView itemBuilder, but AnimatedList has
-                          // an additional animation parameter.
-                          itemBuilder: (context, index, animation) {
-                            // Breaking the row widget out as a method so that we can
-                            // share it with the _removeSingleItem() method.
-                            return _buildItem(_data[index], animation);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                      child: getBidderDetails()
+          //          child: ListView.builder(
+          //     primary: false,
+          //     shrinkWrap: true,
+          //     itemCount: snapshot.data.documents.length,
+          //     itemBuilder: (context, index){
+          //       return new Column(children: <Widget>[
+          //         Card( //                           <-- Card widget
+          //   child: ListTile(
+          //     // leading: Icon(icons[index]),
+          //     title: Text(snapshot.data.document[index]['bidderFirstName']),
+          //     trailing: Column(
+          //                 children: <Widget>[
+          //                   Visibility(
+          //                 child: new IconButton(
+          //                 icon: Icon(Icons.exit_to_app,color: Colors.green,
+          //               ),
+          //               onPressed: (){
+          //                 _removeThisBidder(snapshot.data.document[index]);
+          //               },
+          //               ),
+          //               visible: snapshot.data.document[index]['bidderFirstName'] != currentHighestBidder ,
+          //               ),
+          //               Visibility(
+          //               child: new Text("$_start"),
+          //               visible: snapshot.data.document[index]['bidderFirstName'] == currentBidder ,
+          //               ),
+          //                 ],
+          //               ),
+          //   ),
+          // )
+
+          //       ]);
+          //     },  
+          //   );
+                
+        
+                        
+                // child: Column(
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: <Widget>[
+                //     NotificationListener<OverscrollIndicatorNotification>(
+                //       onNotification: (overscroll) {
+                //         overscroll.disallowGlow();
+                //       },
+                //       child: SizedBox(
+                //         height: 300,
+                        
+                //         child: AnimatedList(
+                //           // Give the Animated list the global key
+                //           key: _listKey,
+                //           initialItemCount: _data.length,
+                //           // Similar to ListView itemBuilder, but AnimatedList has
+                //           // an additional animation parameter.
+                //           itemBuilder: (context, index, animation) {
+                //             // Breaking the row widget out as a method so that we can
+                //             // share it with the _removeSingleItem() method.
+                //             return _buildItem(_data[index], animation);
+                //           },
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                  )
               ],
             ),
@@ -656,6 +775,38 @@ void dispose() {
   }
 
 
+Widget _buildBidder(String item) {
+  return Card(
+                      child: new ListTile(
+                        title: new Text(
+                          item,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        trailing:
+                        new Column(
+                          children: <Widget>[
+                            Visibility(
+                          child: new IconButton(
+                          icon: Icon(Icons.exit_to_app,color: Colors.green,
+                        ),
+                        onPressed: (){
+                          _removeThisBidder(item);
+                        },
+                        ),
+                        visible: item != currentHighestBidder ,
+                        ),
+                        Visibility(
+                        child: new Text("$_start"),
+                        visible: item == currentBidder ,
+                        ),
+                          ],
+                        )
+                         
+                      ),
+                    );
+
+}
+
   // This is the animated row with the Card.
                 Widget _buildItem(String item, Animation animation) {
                   return SizeTransition(
@@ -723,22 +874,34 @@ void dispose() {
                     });
                   }
 
+                  //verify here for skip as this resets to index 0
+                    
+
+                    int bidderIndex = 0;
+                
                    setState(() {
-                    currentBidder = _data[0];
+                    currentBidder = _data[bidderIndex]['bidderFirstName'];
                   });
-                  print(_data[0]);
+                  print("current bidder is $currentBidder");
                 const oneSec = const Duration(seconds: 1);
                 _timer = new Timer.periodic(
                     oneSec,
                     (Timer timer) => setState(() {
                           if (_start < 1) {
-                            _bidItemRotator();
+                            bidderIndex= bidderIndex + 1;
+                            updateCurrentBidder(bidderIndex);
+                            // _bidItemRotator();
                             timer.cancel();
                           } else {
                             _start = _start - 1;
                           }
                         }));
               }  
+              void updateCurrentBidder(int curIndex){
+                setState(() {
+                   currentBidder = _data[curIndex]['bidderFirstName'];
+                });
+              }
 
                void _bidItemRotator(){
                   // removes first element and insert it at last
@@ -761,14 +924,11 @@ void dispose() {
                   // above this end of list rototar
 
                   //start of tools sheet bottom
-                  if(currentBidder == "Moon"){
+                  if(currentBidder == "rahul"){
                     _showPersBottomSheetCallBack();
                   }else if(_showPersBottomSheetCallBack == null){
                     Navigator.pop(context);
                   }
-                  
-
-                  
                 }      
 
                  void _insertDeletedItem(bidder) {

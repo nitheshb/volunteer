@@ -492,7 +492,7 @@ void loginCheck(BuildContext context){
   print("check of values $teamData");
   print("check of values teamData ${teamData.title}");
 
-  LiveBidI user = LiveBidI(bidId: "001_Static", maxPlayers: 4, positions: "_positions.text",matchId: teamData.title, team: teamData.team,bidders:bidderInfo, bidderDetails: biddersPool );
+  LiveBidI user = LiveBidI(bidId: "001_Static", maxPlayers: 4, positions: "_positions.text",currentBidPlayerIndex: 0,bidStatus: "started",matchId: teamData.title, team: teamData.team,bidders:bidderInfo, bidderDetails: biddersPool );
 
     addData2Fire("LiveBidPool", user).then((onValue){
       print("check for inserted uid $onValue");

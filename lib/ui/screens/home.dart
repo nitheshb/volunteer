@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
 
                     return new DefaultTabController (
-                      length:4,
+                      length:3,
                       child: Scaffold(
                         appBar:  AppBar(
                           backgroundColor: Color(0xFF0B4FFD),
@@ -94,15 +94,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               )
                             ],)
                           ],
-                          bottom: TabBar(
-                            isScrollable: true,
-                            tabs: <Widget>[
-                              Tab(text: "CRICKET"), 
-                              Tab(text: "KABADDI"), 
-                              Tab(text: "NBA"), 
-                              Tab(text: "FOOTBALL"), 
-                            ],
-                          )
+                          // bottom: TabBar(
+                          //   isScrollable: true,
+                          //   tabs: <Widget>[
+                          //     Tab(text: "CRICKET"), 
+                          //     Tab(text: "KABADDI"), 
+                          //     Tab(text: "NBA"), 
+                          //     Tab(text: "FOOTBALL"), 
+                          //   ],
+                          // )
                         ),
                         body: Stack(children: <Widget>[
                           Column(
@@ -151,7 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       Tab(
                                         text: "RESULTS"
-                                      )
+                                      ),
+      
                                     ]
                                   )
                                 ),
