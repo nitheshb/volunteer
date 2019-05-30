@@ -53,6 +53,7 @@ try{
 var response = await http.post(url, body: body);
 print('Response status: ${response.statusCode}');
 print('Response body: ${response.body}');
+print('Response body: ${response.body}');
 }
 catch(e){
   print(e);
@@ -122,6 +123,54 @@ catch(e){
     );
   }
 
+
+// this widget is useful in showinf the players list
+
+Widget showPlayersListFilter(BuildContext context, String category) {
+    return Column(children: [
+              Expanded(child: new ListView.builder(
+          padding: const EdgeInsets.all(20.0),
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,     
+          itemCount: widget.team.length,
+          itemBuilder: (BuildContext context, index){
+           return  widget.team[index]["category"] == category ? new  Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.grey.shade800,
+            backgroundImage: NetworkImage("https://d13ir53smqqeyp.cloudfront.net/player-images/1343.png"),
+          ),
+        title: Text(widget.team[index]["player_name"],style: TextStyle(
+      fontSize: 20.0, // insert your font size here
+    ),),
+        subtitle: Text(widget.team[index]["base_price"].toString()),
+        trailing: IconButton(
+            icon: Icon(MyfavPlayers.contains(widget.team[index]) == true ? Icons.favorite : Icons.favorite_border),
+            color: Colors.blue,
+            iconSize: 35,
+            tooltip: 'Second screen',
+            onPressed: () {
+              // move to other screen
+              addToFav(context, widget.team[index]);
+            },
+      ),
+      ),
+    ) : new Container();                                   
+                                      },
+                                    ),),
+                                     Container(
+                                              margin: EdgeInsets.all(10.0),
+                                              child: RaisedButton(
+                                                  color: Theme.of(context).primaryColor,
+                                                  splashColor: Colors.blueGrey,
+                                                  textColor: Colors.white,
+                                                  onPressed: () {
+                                                  print("save my team is pressed");
+                                                  addMatche();
+                                                  },
+                                                  child: Text("Save This Team $myTotalBidLimit"))),
+                                        ]);
+  }
   // receive data from the FirstScreen as a parameter
   // _SecondScreenState({Key key, @required this.text, this.team}) : super(key: key);
 
@@ -157,55 +206,12 @@ catch(e){
             title: Text('Fav Players Selection'),
           ),
           body: TabBarView(
+            
             children: [
-              //  TODO: put this in widget....... end of block also mentioned
-              Column(children: [
-              Expanded(child: new ListView.builder(
-          padding: const EdgeInsets.all(20.0),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,     
-          itemCount: widget.team.length,
-          itemBuilder: (BuildContext context, index){
-           return new  Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.grey.shade800,
-            backgroundImage: NetworkImage("https://d13ir53smqqeyp.cloudfront.net/player-images/1343.png"),
-          ),
-        title: Text(widget.team[index]["player_name"],style: TextStyle(
-      fontSize: 20.0, // insert your font size here
-    ),),
-        subtitle: Text(widget.team[index]["base_price"].toString()),
-        trailing: IconButton(
-            icon: Icon(MyfavPlayers.contains(widget.team[index]) == true ? Icons.favorite : Icons.favorite_border),
-            color: Colors.blue,
-            iconSize: 35,
-            tooltip: 'Second screen',
-            onPressed: () {
-              // move to other screen
-              addToFav(context, widget.team[index]);
-            },
-      ),
-      ),
-    );                                    
-                                      },
-                                    ),),
-                                     Container(
-                                              margin: EdgeInsets.all(10.0),
-                                              child: RaisedButton(
-                                                  color: Theme.of(context).primaryColor,
-                                                  splashColor: Colors.blueGrey,
-                                                  textColor: Colors.white,
-                                                  onPressed: () {
-                                                  print("save my team is pressed");
-                                                  addMatche();
-                                                  },
-                                                  child: Text("Save This Team $myTotalBidLimit"))),
-                                        ]),
-
-                                        // TODO: end of block to mention in App
-              Icon(Icons.directions_transit),
-              Icon(Icons.directions_bike),
+              showPlayersListFilter(context, "Batsmen"),
+              showPlayersListFilter(context, "Bowler"),
+              showPlayersListFilter(context, "AR"),
+              showPlayersListFilter(context, "WK"),
             ],
           ),
         ),
@@ -219,26 +225,62 @@ catch(e){
                  print(team);
                   setState(() {
       if (MyfavPlayers.contains(team)) {
+        // unselects already selected player
+
         myTotalBidLimit = (myTotalBidLimit + team['base_price']);
         MyfavPlayers.remove(team);
-      } else if( myTotalBidLimit >= team['base_price'])  {
+      }  // step 1: check for limit 
+      else if( myTotalBidLimit >= team['base_price'])  {
 
-        myTotalBidLimit = (myTotalBidLimit - team['base_price']);
-        print("values is");
-        print(myTotalBidLimit);
-        MyfavPlayers.add(team);
-      }
-    });
+      //   check for category and process it in function 
+     
+            if(team['category'] == "Batsmen"){
+               playerlimitValidator(context,team['category'],team,3,5);
+            }else if(team['category'] == "Bow"){
+               playerlimitValidator(context,team['category'],team,3,5);
+            }else if(team['category'] == "WK"){
+               playerlimitValidator(context,team['category'],team,1,2);
+            }else if(team['category'] == "All"){
+               playerlimitValidator(context,team['category'],team,1,3);
+            }
+            }
+          });
+      
+          print("fav is");
+                       print(MyfavPlayers);
+                      }
+      
+            Widget PlayersListDisplayW(BuildContext context, List PlayersList){
+      
+            }          
 
-    print("fav is");
-                 print(MyfavPlayers);
+  //  this method witll takes care of validation 
+        void playerlimitValidator(BuildContext context,category,player,min,max) {
+             // get the current length of batsmen in MyfavPlayers
+               int currentbatsCount =   MyfavPlayers.where((player) => player['category'] == category).toList().length;
+              //  we cannot add 6 th bastsmen
+               if(currentbatsCount == max){
+                 Scaffold.of(context).showSnackBar(
+                   SnackBar(
+                     content: Text("$category limit $max reached...!"),
+                     backgroundColor: Colors.redAccent,)
+                 );
+                print("current batsment $currentbatsCount");
+                }else {
+                  myTotalBidLimit = (myTotalBidLimit - player['base_price']);
+                  MyfavPlayers.add(player);
                 }
-
-      Widget PlayersListDisplayW(BuildContext context, List PlayersList){
-
-      }          
-              
-              }
+              print("${player['category']}");
+              // myTotalBidLimit = (myTotalBidLimit - team['base_price']);
+              //     MyfavPlayers.add(team);
+              print("values is");
+              print(myTotalBidLimit);
+              print("teamis ${MyfavPlayers}");
+}
+                    
+                    }
+      
+  
 
 
 

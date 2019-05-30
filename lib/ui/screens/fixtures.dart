@@ -66,6 +66,38 @@ class _FixturesScreenState extends State<FixturesScreen> {
     );
   }
 
+  
+  // user defined function
+  void _showWaitDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text(""),
+          content: new Text("Waiting for Opponents.."),
+          actions: <Widget>[
+             // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Wait"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Exit"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
    Widget buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: getMatches(),
@@ -467,22 +499,62 @@ void loginCheck(BuildContext context){
   }
 
   void _send2BidScreen(BuildContext context, teamData) async {
+    // step 1: check if user is logged in 
+    // step 2 : TODO: check in ghost user wallet for elgiable amount
+    // step 3 : insert into ghostPool
+     // step 4 : check if pool is full 
+    //  a) if pool count is less then 3 then wait box
+    //  b) if pool count is more then 3 
+    //  b1) step 1: trigger an google function
+    //  b2) step 2: it will create an new pool 
+    //  b3) step 3: look for google function output and redirect to bid page
+
 
     // step 1: check if user is logged in 
-
-      final userId = appState?.firebaseUserAuth?.uid ?? '';
+    final userId = appState?.firebaseUserAuth?.uid ?? '';
     final email = appState?.firebaseUserAuth?.email ?? '';
     final firstName = appState?.user?.firstName ?? '';
 
-     if(userId == ''){
-      print("------------------------------>Nithesh");
+      if(userId == ''){
       print("user is not signed... redirect him to login page");
-    } else {
+         Navigator.pushNamed(context, '/signin');
+    }
+
+    // step 2 : TODO: check in ghost user wallet for elgiable amount
+    
+    // step 3 : insert into ghostPool
+        Object bidderInfo2= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"venu17(h)"};
+        insertArrayFire("ghostPool", "Ind_SrlPool",bidderInfo2);
+
+    // step 4 : check if pool is full 
+    //  a) if pool count is less then 3 then wait box
+    //  b) if pool count is more then 3 
+    //  b1) step 1: trigger an google function
+    //  b2) step 2: it will create an new pool 
+    //  b3) step 3: look for google function output and redirect to bid page
+
+    List biddersPool = [ { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":firstName},{ "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"NITHESH(h)"}];
+    // inserting to 
+    print("lenght of bid ${biddersPool.length}");
+     if(userId == ''){
+      print("user is not signed... redirect him to login page");
+         Navigator.pushNamed(context, '/signin');
+    } 
+    else if(biddersPool.length< 3){
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AuctionHome(bidTableId: "Ind_SrlPool"),
+        ));
+
+      _showWaitDialog();
+    }
+    else {
 
     // insert data to  LiveBid Table
     // {bidprice: 0, currentHighestBidder, maxamount: 100, maxplayers: 3, bidId:?, 
     // bidders: [{name:nithesh, remainingAmount 100,playersSelected: [{player_name: kohli}]}]}
-    List biddersPool = [ { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":firstName},{ "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"NITHESH(h)"}];
+    
     Object bidderInfo= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":firstName};
     Object bidderInfo1= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"NITHESH(h)"};
     Object bidderInfo2= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"JEEVAN(H)"};
@@ -504,18 +576,6 @@ void loginCheck(BuildContext context){
           builder: (context) => AuctionHome(bidTableId: onValue,),
         ));
     });
-
-
-        
-    // String textToSend = "sample text passed";
- 
-
-
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => BidPlayerSelectP(text: textToSend,),
-    //     ));
   }
   }
 
