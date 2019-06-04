@@ -99,7 +99,15 @@ class _FixturesScreenState extends State<FixturesScreen> {
   }
 
    Widget buildBody(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
+    return Column(
+      children: <Widget>[
+        Container(
+          height: 140.0,
+          width: double.infinity,
+          color: Color(0xFF37003C),
+          child: titleCard(context),
+        ),
+         StreamBuilder<QuerySnapshot>(
       stream: getMatches(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -111,11 +119,29 @@ class _FixturesScreenState extends State<FixturesScreen> {
         }
         return CircularProgressIndicator();
       },
+    ),
+    
+    StreamBuilder<QuerySnapshot>(
+      stream: getMatches(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error ${snapshot.error}');
+        }
+        if (snapshot.hasData) {
+          print("Documents of fixtures ${snapshot.data.documents.length}");
+          return buildList(context, snapshot.data.documents);
+        }
+        return CircularProgressIndicator();
+      },
+    )
+      ]
     );
   }
 
   Widget buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
       children: snapshot.map((data) => buildListItem(context, data)).toList(),
     );
   }
@@ -135,11 +161,75 @@ class _FixturesScreenState extends State<FixturesScreen> {
       elevation: 8.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+        decoration: BoxDecoration(color: Colors.white),
         child: makeListTile(context,user),
       ),
     )
     );
+                }
+                Widget titleCard(BuildContext context) {
+                  return  Card(
+              //                           shape: RoundedRectangleBorder(
+              //   borderRadius: BorderRadius.circular(10.0),
+              // ),
+              elevation: 3,
+               
+              color: Colors.white,
+                                        child: 
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+
+                                          Padding(
+                                               padding: EdgeInsets.only(top: 30.0),
+                                          child:  Row(
+                                            children: <Widget>[
+                                              Column(children: <Widget>[
+                                              Image.asset("assets/images/southAfrica.png",height: 50.0,
+                                              width: 50.0),
+                                              Text("South Africa1")
+                                              ],)
+                                              
+                                              
+                                            ],
+                                            )
+                                             ),
+                                            Column(
+                                              crossAxisAlignment:  CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text("Indian T20 League"),
+                                                SizedBox(height: 10.0,),
+                                                Text("vs"),
+                                                SizedBox(height: 10.0,),
+                                                Row(
+                              
+                                                  children: [
+                                                    Container(
+                                                      child: Text("07h 10m 27s")
+                                                    )
+                                                    
+                                                  ]
+                                                  )
+                                              ],
+                                            ),
+                                             Padding(
+                                               padding: EdgeInsets.only(top: 30.0),
+                                          child:  Row(
+                                            children: <Widget>[
+                                              Column(children: <Widget>[
+                                              Image.network("https://ssl.gstatic.com/onebox/media/sports/logos/uTQstsRqQKZC-VUZWaNi0w_96x96.png",height: 50.0,
+                                              width: 50.0),
+                                              Text("Bangladesh")
+                                              ],)
+                                              
+                                              
+                                            ],
+                                            )
+                                             )
+                                        ],
+                                      )
+                                      );
                 }
               
               
@@ -232,8 +322,8 @@ class _FixturesScreenState extends State<FixturesScreen> {
               
                     final topAppBar = AppBar(
                     elevation: 0.1,
-                    backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-                    title: Text("Matches(H)"),
+                    backgroundColor: Color(0xFF37003C),
+                    // title: Text("Matches(H)"),
                     actions: <Widget>[
                       IconButton(
                         icon: Icon(Icons.exit_to_app),
@@ -374,19 +464,29 @@ class _FixturesScreenState extends State<FixturesScreen> {
             children: <Widget>[
               Text(
           data.title,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle( fontWeight: FontWeight.bold),
         ),
             ]
 
           )
         ]),
-        trailing: IconButton(
-            icon: Icon(Icons.arrow_forward),
-            onPressed: () {
-              // move to other screen
-              _send2FanSelectScreen(context, data);
-                          }
-          ),
+        trailing: MaterialButton(
+  child: Text('₹ 200' , style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              ),
+  color: Colors.blueAccent,
+  onPressed: () {
+    // send to fantasy game 
+     _send2FanSelectScreen(context, data);
+  },
+),
+        // trailing: IconButton(
+        //     icon: Icon(Icons.arrow_forward),
+        //     onPressed: () {
+        //       // move to other screen
+        //       _send2FanSelectScreen(context, data);
+        //                   }
+        //   ),
             );}
 
    

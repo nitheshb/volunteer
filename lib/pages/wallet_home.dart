@@ -30,7 +30,7 @@ class WalletHome extends StatelessWidget {
                           Material(
                             elevation: 4,
                             child: Container(
-                              color: new Color(0xff00b965),
+                              color: new Color(0xff06A45A),
                             ),
                           ),
                           Opacity(

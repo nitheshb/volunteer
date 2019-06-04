@@ -74,15 +74,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     return new DefaultTabController (
                       length:3,
                       child: Scaffold(
+                        backgroundColor: Colors.white,
                         appBar:  AppBar(
-                          backgroundColor: Color(0xFF0B4FFD),
+                          backgroundColor: Color(0xFF5C3997),
                           actions: <Widget>[
                             Row(children: <Widget>[
                               Container(
                                 height: 100.0,
                                 width: 150.0,
                                 padding: const EdgeInsets.all(5.0),
-                                color: Color(0xFF0B4FFD),
+                                color: Color(0xFF5C3997),
                                 child: Image.asset('logo'),
                               ),
                               SizedBox(width:130.0),
@@ -107,30 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         body: Stack(children: <Widget>[
                           Column(
                             children: <Widget>[
-                              Container(
-                                height:  160.0,
-                                color: Colors.grey[350],
-                                child: ListView.builder(
-                                  
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount:  _cImages.length,
-                                  itemBuilder: (BuildContext context, int index){
-                                    return Container(
-                                      child: Card(
-                                        elevation: 2.0,
-                                        child: Container(
-                                          height: 150.0,
-                                          width: 350.0,
-                                          child: Image.asset(_cImages[index].image,fit: BoxFit.fill,),
-                                          // fit: BoxFit.fill
-                                        ),
-                                      )
-                                    );
-
-                                  },
-                                )
-                              ),
                               Material(
                                 elevation: 5.0,
                                 child: Container(
@@ -141,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                        width:2.0
                                       )
                                     ),
-                                    labelColor: Colors.blueGrey,
+                                    labelColor: Colors.black,
                                     tabs: [
                                       Tab(
                                         text: "FIXTURES"
@@ -157,17 +134,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 ),
                               ),
-                              SizedBox(height: 25.0,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                Text("Pick an Upcoming match", style: TextStyle(color: Colors.grey[600])),
+                              // SizedBox(height: 25.0,),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   children: <Widget>[
+                              //   Text("Pick an Upcoming match", style: TextStyle(color: Colors.grey[600])),
                                 
-                              ],),
+                              // ],),
                               
                               Expanded(child: Container(
                                 child: ListView.builder(
-                                  padding: const EdgeInsets.all(20.0),
+                                  padding: const EdgeInsets.all(15.0),
                                   shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
                                   itemCount: 6,
@@ -176,19 +153,37 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onTap: (){
                                       Navigator.pushNamed(context, "/fixtures");
                                     },
-                                   child: Container (
+                                   child:   Padding(
+                                               padding: EdgeInsets.only(top: 8.0), 
+                                    child :Container (
                                       height: 100.0,
                                       width: 188.0,
-                                      child: Card(child: 
+                                      child: Card(
+              //                           shape: RoundedRectangleBorder(
+              //   borderRadius: BorderRadius.circular(10.0),
+              // ),
+              elevation: 3,
+               
+              color: Colors.white,
+                                        child: 
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
-                                          Row(
+
+                                          Padding(
+                                               padding: EdgeInsets.only(top: 12.0),
+                                          child:  Row(
                                             children: <Widget>[
-                                              Image.asset("assets/images/i.png", height: 100.0,
-                                              width: 80.0),
-                        
-                                            ],),
+                                              Column(children: <Widget>[
+                                              Image.asset("assets/images/southAfrica.png",height: 50.0,
+                                              width: 50.0),
+                                              Text("South Africa")
+                                              ],)
+                                              
+                                              
+                                            ],
+                                            )
+                                             ),
                                             Column(
                                               crossAxisAlignment:  CrossAxisAlignment.center,
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -208,21 +203,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   )
                                               ],
                                             ),
-                                            Row(
+                                             Padding(
+                                               padding: EdgeInsets.only(top: 12.0),
+                                          child:  Row(
                                             children: <Widget>[
-                                              Image.asset("assets/images/i.png",height: 100.0,
-                                              width: 80.0),
+                                              Column(children: <Widget>[
+                                              Image.network("https://ssl.gstatic.com/onebox/media/sports/logos/uTQstsRqQKZC-VUZWaNi0w_96x96.png",height: 50.0,
+                                              width: 50.0),
+                                              Text("Bangladesh")
+                                              ],)
+                                              
                                               
                                             ],
                                             )
+                                             )
                                         ],
                                       )
                                       ),
                                     )
+                                   )
                                     );
                                   },
                                 ),
-                              ),)
+                                decoration: new BoxDecoration(
+                                  boxShadow: [
+                                        new BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          
+                                          blurRadius: 20.0,
+                                          ),
+                                          ],
+                                  borderRadius: BorderRadius.circular(15),
+      ),
+                              ),
+                              
+                              )
                             ],
                           ),
 

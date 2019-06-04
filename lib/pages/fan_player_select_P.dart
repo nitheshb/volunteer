@@ -7,11 +7,14 @@ import 'package:test_app_1/util/state_widget.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
 import 'package:test_app_1/models/state.dart';
 
+import 'capVcapSet.dart';
+
 
 class SecondScreen extends StatefulWidget {
   SecondScreen({Key key, @required this.text, this.team  }) : super(key: key);
   final String text;
   final List team;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   _SecondScreenState createState() => _SecondScreenState();
@@ -40,6 +43,8 @@ class _SecondScreenState extends State<SecondScreen> {
  getMatches() {
     return Firestore.instance.collection(collectionName).snapshots();
   }
+
+
 
   addMatche() async {
  print("ghhhh");
@@ -129,7 +134,7 @@ catch(e){
 Widget showPlayersListFilter(BuildContext context, String category) {
     return Column(children: [
               Expanded(child: new ListView.builder(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(0.0),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,     
           itemCount: widget.team.length,
@@ -145,9 +150,9 @@ Widget showPlayersListFilter(BuildContext context, String category) {
     ),),
         subtitle: Text(widget.team[index]["base_price"].toString()),
         trailing: IconButton(
-            icon: Icon(MyfavPlayers.contains(widget.team[index]) == true ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(MyfavPlayers.contains(widget.team[index]) == true ? Icons.star : Icons.star_border),
             color: Colors.blue,
-            iconSize: 35,
+            iconSize: 30,
             tooltip: 'Second screen',
             onPressed: () {
               // move to other screen
@@ -158,17 +163,6 @@ Widget showPlayersListFilter(BuildContext context, String category) {
     ) : new Container();                                   
                                       },
                                     ),),
-                                     Container(
-                                              margin: EdgeInsets.all(10.0),
-                                              child: RaisedButton(
-                                                  color: Theme.of(context).primaryColor,
-                                                  splashColor: Colors.blueGrey,
-                                                  textColor: Colors.white,
-                                                  onPressed: () {
-                                                  print("save my team is pressed");
-                                                  addMatche();
-                                                  },
-                                                  child: Text("Save This Team $myTotalBidLimit"))),
                                         ]);
   }
   // receive data from the FirstScreen as a parameter
@@ -214,6 +208,21 @@ Widget showPlayersListFilter(BuildContext context, String category) {
               showPlayersListFilter(context, "WK"),
             ],
           ),
+
+             floatingActionButton: new Builder(builder: (BuildContext context) {
+        return new FloatingActionButton.extended(
+          onPressed: () {
+             playerMinlimitValidator(context);
+          // Scaffold
+          //     .of(context)
+          //     .showSnackBar(new SnackBar(content: new Text('Hello!')));
+        },
+        icon: Icon(Icons.save),
+        label: Text("set Caption"),
+        );
+         
+      },
+             )
         ),
       ),
     );
@@ -235,13 +244,13 @@ Widget showPlayersListFilter(BuildContext context, String category) {
       //   check for category and process it in function 
      
             if(team['category'] == "Batsmen"){
-               playerlimitValidator(context,team['category'],team,3,5);
+               playerMaxlimitValidator(context,team['category'],team,3,1);
             }else if(team['category'] == "Bow"){
-               playerlimitValidator(context,team['category'],team,3,5);
+               playerMaxlimitValidator(context,team['category'],team,3,5);
             }else if(team['category'] == "WK"){
-               playerlimitValidator(context,team['category'],team,1,2);
+               playerMaxlimitValidator(context,team['category'],team,1,2);
             }else if(team['category'] == "All"){
-               playerlimitValidator(context,team['category'],team,1,3);
+               playerMaxlimitValidator(context,team['category'],team,1,3);
             }
             }
           });
@@ -249,17 +258,18 @@ Widget showPlayersListFilter(BuildContext context, String category) {
           print("fav is");
                        print(MyfavPlayers);
                       }
-      
-            Widget PlayersListDisplayW(BuildContext context, List PlayersList){
-      
-            }          
+             
 
   //  this method witll takes care of validation 
-        void playerlimitValidator(BuildContext context,category,player,min,max) {
+        void playerMaxlimitValidator(BuildContext context,category,player,min,max) {
              // get the current length of batsmen in MyfavPlayers
                int currentbatsCount =   MyfavPlayers.where((player) => player['category'] == category).toList().length;
+               String val = "val_$category";
+               
               //  we cannot add 6 th bastsmen
                if(currentbatsCount == max){
+
+
                  Scaffold.of(context).showSnackBar(
                    SnackBar(
                      content: Text("$category limit $max reached...!"),
@@ -277,7 +287,76 @@ Widget showPlayersListFilter(BuildContext context, String category) {
               print(myTotalBidLimit);
               print("teamis ${MyfavPlayers}");
 }
-                    
+
+
+
+  //  this method witll takes care of validation 
+        void playerMinlimitValidator(BuildContext context) {
+             // get the current length of batsmen in MyfavPlayers
+               int BatsCount =   MyfavPlayers.where((player) => player['category'] == "Batsmen").toList().length;
+               int BowCount =   MyfavPlayers.where((player) => player['category'] == "Bow").toList().length;
+               int WKCount =   MyfavPlayers.where((player) => player['category'] == "WK").toList().length;
+               int AllCount =   MyfavPlayers.where((player) => player['category'] == "All").toList().length;
+               
+
+               print(" values are , $BatsCount");
+              //  we cannot add 6 th bastsmen
+               if(BatsCount < 1){
+                 print("inside limit checker of batsCount");
+
+                   Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text("Min 3 Batsmen Required"),
+                backgroundColor: Colors.blueAccent,
+                duration: Duration(seconds: 3),
+              ));
+                //  Scaffold.of(context).showSnackBar(
+                //    SnackBar(
+                //      content: Text("Select min 3 Batsmen"),
+                //      backgroundColor: Colors.redAccent,)
+                //  );
+                }else if(BowCount < 3){
+                 Scaffold.of(context).showSnackBar(
+                   SnackBar(
+                     content: Text("Selected min 3 Bowlers"),
+                     backgroundColor: Colors.redAccent,)
+                 );
+                }else if(WKCount < 1){
+                 Scaffold.of(context).showSnackBar(
+                   SnackBar(
+                     content: Text("Selected min 1 WK"),
+                     backgroundColor: Colors.redAccent,)
+                 );
+                }else if(AllCount < 1){
+                 Scaffold.of(context).showSnackBar(
+                   SnackBar(
+                     content: Text("Selected min 1 All Rounders"),
+                     backgroundColor: Colors.redAccent,)
+                 );
+                }
+                else {
+                  Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CapVCapSelection(text: "cap Vcap set", team: MyfavPlayers),
+        ));
+                }
+             
+              // myTotalBidLimit = (myTotalBidLimit - team['base_price']);
+              //     MyfavPlayers.add(team);
+              print("values is");
+              print(myTotalBidLimit);
+              print("teamis ${MyfavPlayers}");
+}          
+
+//  if(team['category'] == "Batsmen"){
+//                playerMaxlimitValidator(context,team['category'],team,3,1);
+//             }else if(team['category'] == "Bow"){
+//                playerMaxlimitValidator(context,team['category'],team,3,5);
+//             }else if(team['category'] == "WK"){
+//                playerMaxlimitValidator(context,team['category'],team,1,2);
+//             }else if(team['category'] == "All"){
+//                playerMaxlimitValidator(context,team['category'],team,1,3);
+//             }
                     }
       
   
