@@ -63,10 +63,16 @@ try{
 });
     var url = 'https://xsports.azurewebsites.net/api/HttpTrigger1';
 var response = await http.post(url, body: body);
+var newTeamID = await json.decode(response.body)['obj']['_id'];
+var userId = appState?.firebaseUserAuth?.uid ?? '';
+
+await update("dummy",userId ,newTeamID);
+
 print('Response status: ${response.statusCode}');
 print('Response body: ${response.body}');
-print('Response body: ${response.body}');
+print('Response body: ${json.decode(response.body)['obj']['_id']}');
 setState(() {
+  //  this value is set to 10 just me clear the if else and display tick icon.
    widget.saveProgress = 10;
  });
 }
@@ -76,14 +82,8 @@ catch(e){
   
   }
 
-  update( user, String newName) {
-    try {
-      Firestore.instance.runTransaction((transaction) async {
-        await transaction.update(user.reference, {'title': newName});
-      });
-    } catch (e) {
-      print(e.toString());
-    }
+  update( user, iamId,String newGameId) {
+    Firestore.instance.collection("Iam").document(iamId).updateData({"games": FieldValue.arrayUnion([newGameId])});
   }
 
   delete( user) {

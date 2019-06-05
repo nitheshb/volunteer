@@ -298,6 +298,12 @@ Widget showPlayersListFilter(BuildContext context, String category) {
                int WKCount =   MyfavPlayers.where((player) => player['category'] == "WK").toList().length;
                int AllCount =   MyfavPlayers.where((player) => player['category'] == "All").toList().length;
                
+//  this navigation code be removed 
+                Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CapVCapSelection(text: "cap Vcap set", team: MyfavPlayers),
+        ));
 
                print(" values are , $BatsCount");
               //  we cannot add 6 th bastsmen
