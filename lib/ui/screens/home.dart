@@ -50,13 +50,20 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   StateModel appState;
   bool _loadingVisible = false;
-  String collectionName = "Matches";
+  String collectionName = "scheduleMaker";
   @override
   void initState() {
     super.initState();
   }
 
-                    
+
+  getMatches() {
+    return Firestore.instance.collection(collectionName).snapshots();
+  }
+
+
+
+
     Widget build(BuildContext context) {
                   appState = StateWidget.of(context).state;
                   if (!appState.isLoading &&
@@ -130,7 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         text: "RESULTS"
                                       ),
       
-                                    ]
+                                    ],
+                                    
                                   )
                                 ),
                               ),
@@ -143,15 +151,34 @@ class _HomeScreenState extends State<HomeScreen> {
                               // ],),
                               
                               Expanded(child: Container(
-                                child: ListView.builder(
+                                child:
+                                StreamBuilder<QuerySnapshot>(
+      stream: getMatches(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error ${snapshot.error}');
+        }
+        if (snapshot.hasData) {
+          print("Documents of fixtures 1 ${snapshot.data.documents.length}");
+          // return buildList(context, snapshot.data.documents);
+        
+                            return     ListView.builder(
                                   padding: const EdgeInsets.all(15.0),
                                   shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
-                                  itemCount: 6,
+                                  itemCount: snapshot.data.documents.length,
                                   itemBuilder: (BuildContext context, int index){
+                                    DocumentSnapshot ds = snapshot.data.documents[index];
+                                    print("ds snap is ${ds['matchDetails']['team-1']}");
                                     return new GestureDetector(
                                       onTap: (){
-                                      Navigator.pushNamed(context, "/fixtures");
+                                      // Navigator.pushNamed(context, "/fixtures");
+
+                                      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FixturesScreen(matchId: ds['matchDetails']['unique_id'], matchDetails:ds['matchDetails']),
+        ));
                                     },
                                    child:   Padding(
                                                padding: EdgeInsets.only(top: 8.0), 
@@ -175,9 +202,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child:  Row(
                                             children: <Widget>[
                                               Column(children: <Widget>[
-                                              Image.asset("assets/images/southAfrica.png",height: 50.0,
+                                               Image.network(ds['matchDetails']['team_1_pic'],height: 50.0,
                                               width: 50.0),
-                                              Text("South Africa")
+                                              Text(ds['matchDetails']['team-1'])
                                               ],)
                                               
                                               
@@ -208,9 +235,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child:  Row(
                                             children: <Widget>[
                                               Column(children: <Widget>[
-                                              Image.network("https://ssl.gstatic.com/onebox/media/sports/logos/uTQstsRqQKZC-VUZWaNi0w_96x96.png",height: 50.0,
+                                              Image.network(ds['matchDetails']['team_2_pic'],height: 50.0,
                                               width: 50.0),
-                                              Text("Bangladesh")
+                                              Text(ds['matchDetails']['team-2'])
                                               ],)
                                               
                                               
@@ -224,7 +251,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                    )
                                     );
                                   },
-                                ),
+                                );
+                                }
+        return CircularProgressIndicator();
+      },
+    ),
                                 decoration: new BoxDecoration(
                                   boxShadow: [
                                         new BoxShadow(

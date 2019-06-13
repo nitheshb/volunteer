@@ -35,7 +35,9 @@ class MyApp extends StatelessWidget {
         '/wallet_home': (context) => WalletHome(),
         '/razorPay_home': (context) => RazorPayHome(),
         '/scratchCard': (context) => ScratchCardP(),
-        '/fixtures': (context) => FixturesScreen(auth: new Auth()),
+        // '/fixtures': (context) => FixturesScreen(auth: new Auth()),
+        '/fixtures': (context) => FixturesScreen(),
+
         '/auctionHome': (context)=> AuctionHome(),
         
       },

@@ -39,8 +39,11 @@ var series = [
 ];
 
 class FixturesScreen extends StatefulWidget {
-  FixturesScreen({this.auth});
-  final BaseAuth auth;
+  FixturesScreen({Key key, this.matchId , this.matchDetails }) : super(key: key);
+   final int matchId;
+   Map matchDetails;
+  // final List team;
+  //  final BaseAuth auth;
   _FixturesScreenState createState() => _FixturesScreenState();
 }
 
@@ -149,6 +152,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
   Widget buildListItem(BuildContext context, DocumentSnapshot data) {
     final user = MatchesI.fromSnapshot(data);
     print("user is");
+    print("detials of fetch is ${widget.matchId} ${widget.matchDetails}");
     print(user);
     // return Column(
     //  children: <Widget>[
@@ -185,9 +189,10 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                           child:  Row(
                                             children: <Widget>[
                                               Column(children: <Widget>[
-                                              Image.asset("assets/images/southAfrica.png",height: 50.0,
+                                              // Image.asset("assets/images/southAfrica.png",height: 50.0,
+                                               Image.network(widget.matchDetails['team_1_pic'],height:50.0 ,
                                               width: 50.0),
-                                              Text("South Africa1")
+                                              Text(widget.matchDetails['team-1']),
                                               ],)
                                               
                                               
@@ -218,9 +223,9 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                           child:  Row(
                                             children: <Widget>[
                                               Column(children: <Widget>[
-                                              Image.network("https://ssl.gstatic.com/onebox/media/sports/logos/uTQstsRqQKZC-VUZWaNi0w_96x96.png",height: 50.0,
+                                               Image.network(widget.matchDetails['team_2_pic'],height:50.0 ,
                                               width: 50.0),
-                                              Text("Bangladesh")
+                                              Text(widget.matchDetails['team-2'])
                                               ],)
                                               
                                               
@@ -471,7 +476,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
           )
         ]),
         trailing: MaterialButton(
-  child: Text('₹ 200' , style:
+  child: Text('₹ ${data.fee}' , style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               ),
   color: Colors.blueAccent,
@@ -590,11 +595,11 @@ void loginCheck(BuildContext context){
     String textToSend = user.title;
     print("check 123");
     print(user.title);
-    print(user);
+    print("fantasy fixtuer details ${user}");
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SecondScreen(text: textToSend, team: user.team),
+          builder: (context) => SecondScreen(text: textToSend, team: user.team,fixture: user,),
         ));
   }
 

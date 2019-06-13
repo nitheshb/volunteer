@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:test_app_1/Interfaces/matches_I.dart';
 import 'package:test_app_1/util/state_widget.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
 import 'package:test_app_1/models/state.dart';
@@ -11,9 +12,10 @@ import 'capVcapSet.dart';
 
 
 class SecondScreen extends StatefulWidget {
-  SecondScreen({Key key, @required this.text, this.team  }) : super(key: key);
+  SecondScreen({Key key, @required this.text, this.team , this.fixture }) : super(key: key);
   final String text;
   final List team;
+  MatchesI fixture;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -143,9 +145,9 @@ Widget showPlayersListFilter(BuildContext context, String category) {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.grey.shade800,
-            backgroundImage: NetworkImage("https://d13ir53smqqeyp.cloudfront.net/player-images/1343.png"),
+            backgroundImage: NetworkImage(widget.team[index]["pic_url"]),
           ),
-        title: Text(widget.team[index]["player_name"],style: TextStyle(
+        title: Text(widget.team[index]["name"],style: TextStyle(
       fontSize: 20.0, // insert your font size here
     ),),
         subtitle: Text(widget.team[index]["base_price"].toString()),
@@ -202,7 +204,7 @@ Widget showPlayersListFilter(BuildContext context, String category) {
           body: TabBarView(
             
             children: [
-              showPlayersListFilter(context, "Batsmen"),
+              showPlayersListFilter(context, "Bat"),
               showPlayersListFilter(context, "Bowler"),
               showPlayersListFilter(context, "AR"),
               showPlayersListFilter(context, "WK"),
@@ -236,14 +238,14 @@ Widget showPlayersListFilter(BuildContext context, String category) {
       if (MyfavPlayers.contains(team)) {
         // unselects already selected player
 
-        myTotalBidLimit = (myTotalBidLimit + team['base_price']);
+        myTotalBidLimit = (myTotalBidLimit + int.parse(team['base_price']));
         MyfavPlayers.remove(team);
       }  // step 1: check for limit 
-      else if( myTotalBidLimit >= team['base_price'])  {
+      else if( myTotalBidLimit >= int.parse(team['base_price']))  {
 
       //   check for category and process it in function 
      
-            if(team['category'] == "Batsmen"){
+            if(team['category'] == "Bat"){
                playerMaxlimitValidator(context,team['category'],team,3,1);
             }else if(team['category'] == "Bow"){
                playerMaxlimitValidator(context,team['category'],team,3,5);
@@ -277,7 +279,7 @@ Widget showPlayersListFilter(BuildContext context, String category) {
                  );
                 print("current batsment $currentbatsCount");
                 }else {
-                  myTotalBidLimit = (myTotalBidLimit - player['base_price']);
+                  myTotalBidLimit = (myTotalBidLimit - int.parse(player['base_price']));
                   MyfavPlayers.add(player);
                 }
               print("${player['category']}");
@@ -302,7 +304,7 @@ Widget showPlayersListFilter(BuildContext context, String category) {
                 Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CapVCapSelection(text: "cap Vcap set", team: MyfavPlayers),
+          builder: (context) => CapVCapSelection(text: "cap Vcap set", team: MyfavPlayers, fixture: widget.fixture),
         ));
 
                print(" values are , $BatsCount");

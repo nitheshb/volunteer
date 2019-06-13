@@ -1,17 +1,22 @@
+// import 'dart:_http';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:test_app_1/Interfaces/matches_I.dart';
 import 'package:test_app_1/util/state_widget.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
 import 'package:test_app_1/models/state.dart';
 
 
 class CapVCapSelection extends StatefulWidget {
-  CapVCapSelection({Key key, @required this.text, this.team  }) : super(key: key);
+  CapVCapSelection({Key key, @required this.text, this.team, this.fixture  }) : super(key: key);
   final String text;
   final List team;
+  final MatchesI fixture;
    int _selCaptainIndex = -1;
    int _selVCIndex = -1;
    int saveProgress = 0;
@@ -30,6 +35,7 @@ class _CapVCapSelectionState extends State<CapVCapSelection> {
   bool _loadingVisible = false;
   @override
   void initState() {
+    print('transferred data = ${widget.team}');
     myTotalBidLimit = 100;
     MyfavPlayers= widget.team;
     super.initState();
@@ -54,23 +60,34 @@ class _CapVCapSelectionState extends State<CapVCapSelection> {
 
  MyfavPlayers[widget._selCaptainIndex]['caption'] = true;
  MyfavPlayers[widget._selVCIndex]['vcaption'] = true;
+
+ MyfavPlayers[widget._selCaptainIndex]['pid'] = MyfavPlayers[widget._selCaptainIndex]['pid'].toString()+"_c";
+ MyfavPlayers[widget._selVCIndex]['pid'] = MyfavPlayers[widget._selVCIndex]['pid'].toString()+"_vc";
  
  print(MyfavPlayers);
 try{
   print("processing azure api");
-  var body = json.encode({
-  "p_sale_gross": MyfavPlayers
-});
-    var url = 'https://xsports.azurewebsites.net/api/HttpTrigger1';
-var response = await http.post(url, body: body);
-var newTeamID = await json.decode(response.body)['obj']['_id'];
+  var MyfavPlayersJ = json.encode(MyfavPlayers);
+  var favPlayerA = MyfavPlayers.map((fruit) => fruit['pid'].toString()).toList();
+print('fav players array is $favPlayerA');
+  var body = {
+    "uid": appState?.firebaseUserAuth?.uid ?? '',
+  "fanteam": MyfavPlayersJ,
+  "fanteam_a": favPlayerA,
+  "cur_points": 0
+};
+    var url = 'https://ms-azure-endpoints.azurewebsites.net/addFanTeam';
+var response = await Dio().post(url, data: body, options: 
+  new Options(contentType:ContentType.parse("application/x-www-form-urlencoded")),
+      );
+var newTeamID = response.data;
 var userId = appState?.firebaseUserAuth?.uid ?? '';
 
 await update("dummy",userId ,newTeamID);
 
-print('Response status: ${response.statusCode}');
-print('Response body: ${response.body}');
-print('Response body: ${json.decode(response.body)['obj']['_id']}');
+print('Response status: ${response}');
+print('Response body: ${response.data}');
+// print('Response body: ${json.decode(response.data)['obj']['_id']}');
 setState(() {
   //  this value is set to 10 just me clear the if else and display tick icon.
    widget.saveProgress = 10;
@@ -83,6 +100,7 @@ catch(e){
   }
 
   update( user, iamId,String newGameId) {
+    print("inside update;;;;;");
     Firestore.instance.collection("Iam").document(iamId).updateData({"games": FieldValue.arrayUnion([newGameId])});
   }
 
@@ -98,6 +116,7 @@ catch(e){
 // this widget is useful in showinf the players list
 
 Widget showPlayersListFilter(BuildContext context, String category) {
+  print('=======>inside widgit data ${widget.team.length}');
     return Column(children: [
               Expanded(child: new ListView.builder(
           padding: const EdgeInsets.all(0.0),
@@ -112,7 +131,7 @@ Widget showPlayersListFilter(BuildContext context, String category) {
                                            backgroundColor: Colors.grey.shade800,
                                              backgroundImage: NetworkImage("https://d13ir53smqqeyp.cloudfront.net/player-images/1343.png"),
                                            ),
-                                         title: Text(widget.team[index]["player_name"],style: TextStyle(
+                                         title: Text(widget.team[index]["name"],style: TextStyle(
                                        fontSize: 20.0, // insert your font size here
                                      ),),
                                          subtitle: Text(widget.team[index]["base_price"].toString()),
@@ -226,7 +245,7 @@ Widget saveButtonAnime() {
                                                                     } else {
                                                                       _loadingVisible = false;
                                                                     }
-                                                                    print("fetching user value ${appState?.firebaseUserAuth?.uid ?? ''}");
+                                                                    print("fetching user value2 ${appState?.firebaseUserAuth?.uid ?? ''}");
                                                                   }
                                                     return  MaterialApp(
                                                       home: DefaultTabController(
@@ -256,7 +275,7 @@ Widget saveButtonAnime() {
                                                 
                                                       //   check for category and process it in function 
                                                      
-                                                            if(team['category'] == "Batsmen"){
+                                                            if(team['category'] == "Bat"){
                                                                playerlimitValidator(context,team['category'],team,3,5);
                                                             }else if(team['category'] == "Bow"){
                                                                playerlimitValidator(context,team['category'],team,3,5);
