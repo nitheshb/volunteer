@@ -1,7 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:test_app_1/models/state.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:test_app_1/pages/resultsboard.dart';
 import 'package:test_app_1/util/state_widget.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
 import 'package:test_app_1/ui/widgets/loading.dart';
@@ -39,20 +39,17 @@ var series = [
   ),
 ];
 
-class FixturesScreen extends StatefulWidget {
-  FixturesScreen({Key key, this.matchId , this.matchDetails }) : super(key: key);
-   final int matchId;
-   Map matchDetails;
+class ResultsScreen extends StatefulWidget {
+  ResultsScreen({Key key }) : super(key: key);
   // final List team;
   //  final BaseAuth auth;
-  _FixturesScreenState createState() => _FixturesScreenState();
+  _ResultsScreenState createState() => _ResultsScreenState();
 }
 
-class _FixturesScreenState extends State<FixturesScreen> {
+class _ResultsScreenState extends State<ResultsScreen> {
   StateModel appState;
   bool _loadingVisible = false;
-  String collectionName = "TodayFixtures";
-  String LiveBidCollection = "LiveBids";
+  String collectionName = "Iam";
   
 
   @override
@@ -60,47 +57,21 @@ class _FixturesScreenState extends State<FixturesScreen> {
     super.initState();
   }
    getMatches() {
-    return Firestore.instance.collection(collectionName).snapshots();
-  }
-  delete(MatchesI user) {
-    Firestore.instance.runTransaction(
-      (Transaction transaction) async {
-        await transaction.delete(user.reference);
-      },
-    );
-  }
 
-  
-  // user defined function
-  void _showWaitDialog() {
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text(""),
-          content: new Text("Waiting for Opponents.."),
-          actions: <Widget>[
-             // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Wait"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Exit"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+     final settingsId = appState?.settings?.settingsId ?? '';
+     print("id of user is $settingsId");
+    return Firestore.instance.collection(collectionName).document(settingsId).snapshots();
   }
+  
+String url = 'https://ms-azure-endpoints.azurewebsites.net/getFanTeams';
+
+ Future getPost() async{
+   print("post is triggered");
+  var body = {};
+  final response = await Dio().post(url, data: body);
+  print("response from azure my team fetch ${response}");
+  return response.data;
+}
 
    Widget buildBody(BuildContext context) {
     return Column(
@@ -109,134 +80,96 @@ class _FixturesScreenState extends State<FixturesScreen> {
           height: 140.0,
           width: double.infinity,
           color: Color(0xFF37003C),
-          child: titleCard(context),
+          child: Text("Leadership Borad"),
         ),
-         StreamBuilder<QuerySnapshot>(
+         StreamBuilder<DocumentSnapshot>(
       stream: getMatches(),
-      builder: (context, snapshot) {
+      builder: (context, snapshot) { 
         if (snapshot.hasError) {
           return Text('Error ${snapshot.error}');
         }
         if (snapshot.hasData) {
-          print("Documents of fixtures ${snapshot.data.documents.length}");
-          return buildList(context, snapshot.data.documents);
+          var userDocument = snapshot.data;
+          print("Documents of fixtures### ${userDocument.data['games'][0]['fixtureData']['prize']} ${userDocument.data['games'].length}");
+          return ListView.builder(
+            itemExtent: 80.0,
+            shrinkWrap: true,
+            itemCount: userDocument.data['games'].length,
+            itemBuilder: (context, index){
+              print("inside this ${userDocument.data['games'][index]['fixtureData']['prize']}");
+          //  return   makeListTile(context, userDocument.data['games'][index]['fixtureData'] );
+
+           return Container(
+      child: Card(
+      elevation: 8.0,
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: Container(
+        decoration: BoxDecoration(color: Colors.white),
+        child: ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          decoration: new BoxDecoration(
+              border: new Border(
+                  right: new BorderSide(width: 1.0, color: Colors.white24))),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // move to other screen
+              // _send2BidScreen(context,data);
+
+              // make a post call to cosmodb with matchName as collection and fixtureid
+
+              _showDialog();
+
+                          }
+          ),
+        ),
+                title: Text(userDocument.data['games'][index]['fixtureData']['title'].toString()),
+                subtitle: Text(userDocument.data['games'][index]['fixtureData']['prize'].toString()),
+
+              ) 
+               ),
+    )
+    ); 
+          //  return  Text(userDocument.data['games'][index]['fixtureData']['prize'].toString());
+            // Text("check")
+            }
+          );
+          // return buildList(context, userDocument.data['games']);
+          // return Text(userDocument.data['games'][0]['fixtureData']['prize']);
         }
         return CircularProgressIndicator();
       },
     ),
-    
-    StreamBuilder<QuerySnapshot>(
-      stream: getMatches(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error ${snapshot.error}');
-        }
-        if (snapshot.hasData) {
-          print("Documents of fixtures ${snapshot.data.documents.length}");
-          return buildList(context, snapshot.data.documents);
-        }
-        return CircularProgressIndicator();
-      },
-    )
       ]
     );
   }
 
-  Widget buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+  Widget buildList(BuildContext context, List snapshot) {
+    print("inside build" );
     return ListView(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       children: snapshot.map((data) => buildListItem(context, data)).toList(),
     );
   }
-
+ 
   Widget buildListItem(BuildContext context, DocumentSnapshot data) {
-    final user = MatchesI.fromSnapshot(data);
-    print("user is");
-    print("detials of fetch is ${widget.matchId} ${widget.matchDetails}");
-    print(user);
-    // return Column(
-    //  children: <Widget>[
-    //    vaweCard(context ,data, Colors.grey.shade100, Color(0xFF716cff))
-    //  ],
-    // );
-
+    // final user = MatchesI.fromSnapshot(data);
+    print('results list23 $data');
     return Container(
       child: Card(
       elevation: 8.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
-        child: makeListTile(context,user),
+        child: makeListTile(context,data),
       ),
     )
     );
                 }
-                Widget titleCard(BuildContext context) {
-                  return  Card(
-              //                           shape: RoundedRectangleBorder(
-              //   borderRadius: BorderRadius.circular(10.0),
-              // ),
-              elevation: 3,
-               
-              color: Colors.white,
-                                        child: 
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-
-                                          Padding(
-                                               padding: EdgeInsets.only(top: 30.0),
-                                          child:  Row(
-                                            children: <Widget>[
-                                              Column(children: <Widget>[
-                                              // Image.asset("assets/images/southAfrica.png",height: 50.0,
-                                               Image.network(widget.matchDetails['team_1_pic'],height:50.0 ,
-                                              width: 50.0),
-                                              Text(widget.matchDetails['team-1']),
-                                              ],)
-                                              
-                                              
-                                            ],
-                                            )
-                                             ),
-                                            Column(
-                                              crossAxisAlignment:  CrossAxisAlignment.center,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text("Indian T20 League"),
-                                                SizedBox(height: 10.0,),
-                                                Text("vs"),
-                                                SizedBox(height: 10.0,),
-                                                Row(
-                              
-                                                  children: [
-                                                    Container(
-                                                      child: Text("07h 10m 27s")
-                                                    )
-                                                    
-                                                  ]
-                                                  )
-                                              ],
-                                            ),
-                                             Padding(
-                                               padding: EdgeInsets.only(top: 30.0),
-                                          child:  Row(
-                                            children: <Widget>[
-                                              Column(children: <Widget>[
-                                               Image.network(widget.matchDetails['team_2_pic'],height:50.0 ,
-                                              width: 50.0),
-                                              Text(widget.matchDetails['team-2'])
-                                              ],)
-                                              
-                                              
-                                            ],
-                                            )
-                                             )
-                                        ],
-                                      )
-                                      );
-                }
+              
               
               
               
@@ -369,13 +302,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                     ),
                                     IconButton(
                                       icon: Icon(Icons.blur_on, color: Colors.white),
-                                     onPressed: () { 
-                                        Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ResultsScreen(),
-        ));
-                                      },
+                                      onPressed: () {},
                                     )
                                   ],
                                 ),
@@ -450,7 +377,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
 
 
     Widget makeListTile(BuildContext context, data) {
-      print("data is");
+      print("data is cccc");
       print(data);
       return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
@@ -475,7 +402,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
             alignment: Alignment.center,
             children: <Widget>[
               Text(
-          data.title,
+          data.title.toString(),
           style: TextStyle( fontWeight: FontWeight.bold),
         ),
             ]
@@ -483,7 +410,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
           )
         ]),
         trailing: MaterialButton(
-  child: Text('₹ ${data.fee}' , style:
+  child: Text('₹ ${data.prize.toString()}' , style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               ),
   color: Colors.blueAccent,
@@ -659,7 +586,6 @@ void loginCheck(BuildContext context){
           builder: (context) => AuctionHome(bidTableId: "Ind_SrlPool"),
         ));
 
-      _showWaitDialog();
     }
     else {
 
@@ -674,7 +600,7 @@ void loginCheck(BuildContext context){
     // biddersPool.addAll(bidderInfo1);
     // biddersPool.addAll(bidderInfo2);
   print("check of values $teamData");
-  print("check of values teamData ${teamData.title}");
+  // print("check of values teamData ${teamData.title}");
 
   LiveBidI user = LiveBidI(bidId: "001_Static", maxPlayers: 4, positions: "_positions.text",currentBidPlayerIndex: 0,bidStatus: "started",matchId: teamData.title, team: teamData.team,bidders:bidderInfo, bidderDetails: biddersPool );
 
@@ -691,4 +617,98 @@ void loginCheck(BuildContext context){
   }
   }
 
+
+// user defined function
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Leadership Board"),
+          content: setupAlertDialoadContainer(),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+Widget setupAlertDialoadContainer() {
+    return Container(
+      height: 300.0, // Change as per your requirement getPost
+      width: 300.0, // Change as per your requirement
+      child: FutureBuilder(
+    future: getPost(),
+    builder: (context, snapshot) {
+      if(snapshot.connectionState == ConnectionState.done)
+     
+  return  Column(
+    children: <Widget>[new Container (
+                child: new ListTile(
+                leading: Text("Rank"),
+                title: Text("Name"),
+                trailing: Text("Points"),
+              ),
+               decoration:
+                new BoxDecoration(
+                    border: new Border(
+                        bottom: new BorderSide()
+                    )
+                )
+              ),
+      ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.data.length,
+            itemBuilder: (BuildContext context, int index) {
+              var ss = snapshot.data[index];
+              return  new Container (
+                child: new ListTile(
+                leading: Text((index + 1).toString()),
+                title: Text(ss['uid']),
+                trailing: Text(ss['cur_points'].toString()),
+              ),
+               decoration:
+                new BoxDecoration(
+                    border: new Border(
+                        bottom: new BorderSide()
+                    )
+                )
+              );
+            },
+          ),
+    ],
+  );
+else
+  return SizedBox(
+    child: 
+        new CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation(Colors.blue),
+       ),
+    height: 30.0,
+    width: 30.0,);
+        // return Text('${snapshot.data.uid}');
+    }
+)
+      // child: ListView.builder(
+      //   shrinkWrap: true,
+      //   itemCount: 5,
+      //   itemBuilder: (BuildContext context, int index) {
+      //     return ListTile(
+      //       title: Text('Gujarat, India'),
+      //     );
+      //   },
+      // ),
+    );
+  }
+
 }
+
+

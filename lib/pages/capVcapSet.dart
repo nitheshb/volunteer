@@ -66,8 +66,8 @@ class _CapVCapSelectionState extends State<CapVCapSelection> {
  
  print(MyfavPlayers);
 try{
-  print("processing azure api");
-  var MyfavPlayersJ = json.encode(MyfavPlayers);
+  print("processing azure api ${MyfavPlayers}");
+  var MyfavPlayersJ = MyfavPlayers;
   var favPlayerA = MyfavPlayers.map((fruit) => fruit['pid'].toString()).toList();
 print('fav players array is $favPlayerA');
   var body = {
@@ -77,10 +77,8 @@ print('fav players array is $favPlayerA');
   "cur_points": 0
 };
     var url = 'https://ms-azure-endpoints.azurewebsites.net/addFanTeam';
-var response = await Dio().post(url, data: body, options: 
-  new Options(contentType:ContentType.parse("application/x-www-form-urlencoded")),
-      );
-var newTeamID = response.data;
+var response = await Dio().post(url, data: body);
+var newTeamID = await response.data;
 var userId = appState?.firebaseUserAuth?.uid ?? '';
 
 await update("dummy",userId ,newTeamID);
@@ -100,8 +98,9 @@ catch(e){
   }
 
   update( user, iamId,String newGameId) {
-    print("inside update;;;;;");
-    Firestore.instance.collection("Iam").document(iamId).updateData({"games": FieldValue.arrayUnion([newGameId])});
+    print("inside update;;;;; ${widget.fixture.toJson()}");
+    var newFanGameObj = { "fixtureData": widget.fixture.toJson() , "myFanTeamId": newGameId };
+    Firestore.instance.collection("Iam").document(iamId).updateData({"games": FieldValue.arrayUnion([newFanGameObj])});
   }
 
   delete( user) {
