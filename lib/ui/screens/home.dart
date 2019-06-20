@@ -83,14 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Scaffold(
                         backgroundColor: Colors.white,
                         appBar:  AppBar(
-                          backgroundColor: Color(0xFF5C3997),
+                          // backgroundColor: Color(0xFF5C3997),
                           actions: <Widget>[
                             Row(children: <Widget>[
                               Container(
                                 height: 100.0,
                                 width: 150.0,
                                 padding: const EdgeInsets.all(5.0),
-                                color: Color(0xFF5C3997),
+                                // color: Color(0xFF5C3997),
                                 child: Image.asset('logo'),
                               ),
                               SizedBox(width:130.0),
@@ -142,14 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 ),
                               ),
-                              // SizedBox(height: 25.0,),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.center,
-                              //   children: <Widget>[
-                              //   Text("Pick an Upcoming match", style: TextStyle(color: Colors.grey[600])),
-                                
-                              // ],),
-                              
                               Expanded(child: Container(
                                 child:
                                 StreamBuilder<QuerySnapshot>(
@@ -172,7 +164,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     print("ds snap is ${ds['matchDetails']['team-1']}");
                                     return new GestureDetector(
                                       onTap: (){
-                                      // Navigator.pushNamed(context, "/fixtures");
 
                                       Navigator.push(
         context,
@@ -181,16 +172,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
                                     },
                                    child:   Padding(
-                                               padding: EdgeInsets.only(top: 8.0), 
+                                               padding: EdgeInsets.only(top: 4.0), 
                                     child :Container (
                                       height: 100.0,
                                       width: 188.0,
                                       child: Card(
-              //                           shape: RoundedRectangleBorder(
-              //   borderRadius: BorderRadius.circular(10.0),
-              // ),
               elevation: 3,
-               
               color: Colors.white,
                                         child: 
                                       Row(
@@ -204,10 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Column(children: <Widget>[
                                                Image.network(ds['matchDetails']['team_1_pic'],height: 50.0,
                                               width: 50.0),
-                                              Text(ds['matchDetails']['team-1'])
+                                              Text(ds['matchDetails']['team-1'], style: TextStyle(fontWeight: FontWeight.bold))
                                               ],)
-                                              
-                                              
                                             ],
                                             )
                                              ),
@@ -217,15 +202,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                               children: <Widget>[
                                                 Text("Indian T20 League"),
                                                 SizedBox(height: 10.0,),
-                                                Text("vs"),
+                                                Text("vs", style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16.0)),
                                                 SizedBox(height: 10.0,),
                                                 Row(
-                              
                                                   children: [
                                                     Container(
                                                       child: Text("07h 10m 27s")
                                                     )
-                                                    
                                                   ]
                                                   )
                                               ],
@@ -237,10 +220,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Column(children: <Widget>[
                                               Image.network(ds['matchDetails']['team_2_pic'],height: 50.0,
                                               width: 50.0),
-                                              Text(ds['matchDetails']['team-2'])
+                                              Text(ds['matchDetails']['team-2'], style: TextStyle(fontWeight: FontWeight.bold))
                                               ],)
-                                              
-                                              
                                             ],
                                             )
                                              )

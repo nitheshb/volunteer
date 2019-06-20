@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app_1/models/state.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:test_app_1/pages/myProfileP.dart';
 import 'package:test_app_1/pages/resultsboard.dart';
 import 'package:test_app_1/util/state_widget.dart';
 import 'package:test_app_1/ui/screens/sign_in.dart';
@@ -108,7 +109,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
         Container(
           height: 140.0,
           width: double.infinity,
-          color: Color(0xFF37003C),
+          color: Theme.of(context).primaryColor,
           child: titleCard(context),
         ),
          StreamBuilder<QuerySnapshot>(
@@ -193,7 +194,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                               // Image.asset("assets/images/southAfrica.png",height: 50.0,
                                                Image.network(widget.matchDetails['team_1_pic'],height:50.0 ,
                                               width: 50.0),
-                                              Text(widget.matchDetails['team-1']),
+                                              Text(widget.matchDetails['team-1'], style: TextStyle(fontWeight: FontWeight.bold))
                                               ],)
                                               
                                               
@@ -206,7 +207,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                               children: <Widget>[
                                                 Text("Indian T20 League"),
                                                 SizedBox(height: 10.0,),
-                                                Text("vs"),
+                                                Text("vs", style: TextStyle(fontWeight: FontWeight.w600)),
                                                 SizedBox(height: 10.0,),
                                                 Row(
                               
@@ -226,7 +227,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                               Column(children: <Widget>[
                                                Image.network(widget.matchDetails['team_2_pic'],height:50.0 ,
                                               width: 50.0),
-                                              Text(widget.matchDetails['team-2'])
+                                              Text(widget.matchDetails['team-2'], style: TextStyle(fontWeight: FontWeight.bold))
                                               ],)
                                               
                                               
@@ -328,7 +329,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
               
                     final topAppBar = AppBar(
                     elevation: 0.1,
-                    backgroundColor: Color(0xFF37003C),
+                    backgroundColor: Theme.of(context).primaryColor,
                     // title: Text("Matches(H)"),
                     actions: <Widget>[
                       IconButton(
@@ -345,7 +346,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
                         final makeBottom = Container(
                               height: 55.0,
                               child: BottomAppBar(
-                                color: Color.fromRGBO(58, 66, 86, 1.0),
+                                color: Theme.of(context).primaryColor,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
@@ -373,7 +374,7 @@ class _FixturesScreenState extends State<FixturesScreen> {
                                         Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ResultsScreen(),
+          builder: (context) => MyProfilePage(),
         ));
                                       },
                                     )
@@ -635,7 +636,7 @@ void loginCheck(BuildContext context){
     // step 2 : TODO: check in ghost user wallet for elgiable amount
     
     // step 3 : insert into ghostPool
-        Object bidderInfo2= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"venu17(h)"};
+        Object bidderInfo2= { "bidderID": userId, "bidderEmailId": email, "bidderFirstName":"venu188(h)"};
         insertArrayFire("ghostPool", "Ind_SrlPool",bidderInfo2);
 
     // step 4 : check if pool is full 

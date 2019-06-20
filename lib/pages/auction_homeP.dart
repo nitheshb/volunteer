@@ -115,12 +115,12 @@ void initState() {
 // progressTimer();
 // synchronous 
 
-    if(result.data['currentBidder']['bidderFirstName']== "venu14(h)"){
+    if(result.data['currentBidder']['bidderFirstName']== "venu12(h)"){
       setState(() {
        currentBidderObj =  result.data['currentBidder'];
        currentBidderCopy =  result.data['currentBidder']['bidderFirstName'];
       });
-      print("inside popen sheeet condition");
+      print("inside popen sheeet condition11");
        showbtmSheet();
    
     }else {
@@ -212,7 +212,8 @@ getBidders(){
                         color: snapshot.data.data['activeBidders'][index]['bidderFirstName'] == snapshot.data.data['currentBidder']['bidderFirstName'] ? Colors.blue : Colors.white,//                           <-- Card widget
                 child: ListTile(
                   // leading: Icon(icons[index]),
-                  title: Text(snapshot.data.data['activeBidders'][index]['bidderFirstName']),
+                  title: Text(snapshot.data.data['activeBidders'][index]['bidderFirstName'],
+                  style: TextStyle(fontSize: 20, color: snapshot.data.data['activeBidders'][index]['bidderFirstName'] == snapshot.data.data['currentBidder']['bidderFirstName'] ? Colors.white : Colors.black)),
                   trailing: Column(
                               children: <Widget>[
                                 Visibility(
@@ -425,173 +426,19 @@ showbtmSheet() {
         children: <Widget>[
           Container(
             color: Colors.grey.shade50,
-            height: _media.height / 2.8,
-            child: Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 5,
-                      child: Stack(
-                        children: <Widget>[
-                          Material(
-                            elevation: 4,
-                            child: Container(
-                              color: Color(0xFF1b5bff),
-                            ),
-                          ),
-                          Opacity(
-                            opacity: 0.3,
-                            child: Container(
-                              color: Colors.black87,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(),
-                    )
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 10,
-                    ),
-                    height: _media.longestSide <= 775
-                        ? _media.height / 4
-                        : _media.height / 4.4,
-                    width: _media.width,
-                    // padding: new EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
-                    child:
-                        NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                      },
-                      child: ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(bottom: 10),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: TeamPlayer.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => OverviewPage())),
-                              child: Card(child: 
-                              
-                                      Row(
-                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          SizedBox(width: 10.0,),
-                                          SizedBox(height: 30.0,),
-                                          Column(
-                                            children: <Widget>[
-                                              Image.asset("assets/images/dhoni.jpg",height: screenAwareSize(110, context),
-                                              width: screenAwareSize(110, context), ),
-                                              Text(TeamPlayer[index]['player_name'])
-                                              
-                                            ],
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:  CrossAxisAlignment.center,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Stack(
-            alignment: FractionalOffset.center,
-            overflow: Overflow.visible,
-            children: <Widget>[
-              getScoreButton(),
-              getClapButton(),
-            ],)
-                                              ],
-                                            ),
-                                            SizedBox(width: 10,),
-              
-                                                         Column(
-                                            children: <Widget>[
-                                               colorCard("Highest Bid", TeamPlayer, 1, context, Color(0xFF1b5bff), activeBidPrice,activeHighBidBy),
-
-                                            ],),
-                                            SizedBox(width: 10,)
-                                        ],
-                                      )
-                                      ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: _media.longestSide <= 775
-                      ? screenAwareSize(20, context)
-                      : screenAwareSize(35, context),
-                  left: 10,
-                  right: 10,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(
-                              Icons.menu,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                            onPressed: () {print("Menu");
-                            //  _bidOptionsModalBottomSheet(context);
-                            _showPersBottomSheetCallBack();
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.notifications_none,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                            onPressed: () { print("start Timer");
-                            startTimer();
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            color: Colors.grey.shade50,
             width: _media.width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 16.0, bottom: 5, right: 10, top: 10),
+                      left: 16.0, bottom: 5, right: 10, top: 40),
                       
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Bidders",
+                        "Auction Ground",
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
@@ -606,6 +453,7 @@ showbtmSheet() {
                     ],
                   ),
                 ),
+                shopItem(),
                  Padding(
                   padding: const EdgeInsets.only(
                       left: 25.0, bottom: 15, right: 10),
@@ -897,7 +745,49 @@ showbtmSheet() {
                     );
                   }
                 
-                
+                  Widget highestBidCard(
+                      String text, List amount, int type, BuildContext context, Color color, activePrice, activeHighBy) {
+                        // int bidAmount = amount[0]['base_price'];
+                    final _media = MediaQuery.of(context).size;
+                    return Container(
+                      margin: EdgeInsets.only(top: 0, left: 150),
+                      padding: EdgeInsets.all(15),
+                      height: screenAwareSize(70, context),
+                      width: _media.width / 2 - 34,
+                      decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                                color: color.withOpacity(0.4),
+                                blurRadius: 16,
+                                spreadRadius: 0.2,
+                                offset: Offset(0, 8)),
+                          ]),
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            "100 as Highest Bid",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            "By nithesh",
+                            style: TextStyle(
+                              
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                     Widget colorCard(
                       String text, List amount, int type, BuildContext context, Color color, activePrice, activeHighBy) {
                         int bidAmount = amount[0]['base_price'];
@@ -956,7 +846,7 @@ showbtmSheet() {
                                       child: new ListTile(
                                         title: new Text(
                                           item,
-                                          style: TextStyle(fontSize: 20),
+                                          style: TextStyle(fontSize: 20 ),
                                         ),
                                         trailing:
                                         new Column(
@@ -991,7 +881,7 @@ showbtmSheet() {
                                       child: new ListTile(
                                         title: new Text(
                                           item,
-                                          style: TextStyle(fontSize: 20),
+                                          style: TextStyle(fontSize: 20, color: Colors.white),
                                         ),
                                         trailing:
                                         new Column(
@@ -1164,6 +1054,138 @@ showbtmSheet() {
                       }
                     );
                 }
+
+  Widget shopItem()
+  {
+    return Padding
+    (
+      padding: EdgeInsets.all(16.0),
+      child: Stack
+      (
+        children: <Widget>
+        [
+          /// Item card
+          Align
+          (
+            alignment: Alignment.topCenter,
+            child: SizedBox.fromSize
+            (
+              size: Size.fromHeight(180.0),
+              child: Stack
+              (
+                fit: StackFit.expand,
+                children: <Widget>
+                [
+                  /// Item description inside a material
+                  Container
+                  (
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: Material
+                    (
+                      elevation: 14.0,
+                      borderRadius: BorderRadius.circular(12.0),
+                      shadowColor: Color(0x802196F3),
+                      color: Colors.white,
+                      child: InkWell
+                      (
+                        // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => ItemReviewsPage())),
+                        child: Padding
+                        (
+                          padding: EdgeInsets.all(24.0),
+                          child: Column
+                          (
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>
+                            [
+                              /// Title and rating
+                              Column
+                              (
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>
+                                [
+                                  // Padding(
+                                  //       Text('Nike Jordan III', style: TextStyle(color: Colors.blueAccent)), padding: ,
+                                  // ),
+                        //           Padding
+                        // (
+                        //   padding: EdgeInsets.only(left:124.0),
+                        //   child: Text('Nike JORDAN'))
+               
+                                               highestBidCard("Highest Bid0", TeamPlayer, 1, context, Color(0xFF1b5bff), activeBidPrice,activeHighBidBy),
+                                                                                  ],
+                              ),
+                              /// Infos
+                              Row
+                              (
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>
+                                [
+                                  
+                                    /// Title and rating
+                              Column
+                              (
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                 children: <Widget>[
+        new Text("Rohit Sharma",
+          style: new TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+              fontSize: 16.0,
+          ),),
+        new Text("Batsmen", style:
+          new TextStyle(color: Colors.grey),),
+      ],
+                              ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  /// Item image
+                  Align
+                  (
+                    alignment: Alignment.topLeft,
+                    child: Padding
+                    (
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: SizedBox.fromSize
+                      (
+                        size: Size.fromRadius(54.0),
+                        child: Material
+                        (
+                          elevation: 20.0,
+                          shadowColor: Color(0x802196F3),
+                          shape: CircleBorder(),
+                          child:  CircleAvatar(
+  radius: 20,
+  backgroundImage: NetworkImage('http://t1.gstatic.com/images?q=tbn:ANd9GcR_XkfDWQpnP4FqejGDaDo4xBXo9dFzLJgrQH0-HWdyG9-mhiBDP_Gx311LYemlGyOUt15_1vk')
+)
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ),
+          ),
+          
+        ],
+      ),
+    );
+  }
+
+
                 }
+
+   
+
+
                 
      

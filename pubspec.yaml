@@ -94,14 +94,13 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
-  # fonts:
-  #   - family: Raleway
-  #     fonts:
-  #       - asset: fonts/Raleway-Regular.ttf
-  #       - asset: fonts/Raleway-Thin.ttf
-  #         style: normal
-
   fonts:
+    - family: Raleway
+      fonts:
+        - asset: fonts/Raleway-Regular.ttf
+        - asset: fonts/Raleway-Thin.ttf
+          style: normal
+
     - family: Rubik
       fonts:
         - asset: assets/fonts/Rubik-Regular.ttf
