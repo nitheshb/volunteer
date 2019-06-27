@@ -11,6 +11,8 @@ class DataPerItem {
             r: color.red, g: color.green, b: color.blue, a: color.alpha);
 }
 
+
+
 class DonutPieChart extends StatelessWidget {
   final List<charts.Series> seriesList;
   final bool animate;

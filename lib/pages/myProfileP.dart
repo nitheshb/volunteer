@@ -12,6 +12,10 @@ import 'package:test_app_1/widgets/percent_indicator.dart';
 import 'package:test_app_1/widgets/user_card.dart';
 import 'package:test_app_1/widgets/wave_progress.dart';
 
+
+
+
+  
 var data = [
   new DataPerItem('Home', 35, Colors.greenAccent),
   new DataPerItem('Food & Drink', 25, Colors.yellow),
@@ -36,6 +40,7 @@ class MyProfilePage extends StatefulWidget {
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
+
    bool showTextField = false;
 
   TextEditingController controller = TextEditingController();
@@ -55,13 +60,24 @@ class _MyProfilePageState extends State<MyProfilePage> {
   TextEditingController _teamId = TextEditingController();
 
   String collectionName = "Matches";
+  String collectionName1 = "Issues";
 
   bool isEditing = false;
 
+  String dataSelect = "Houses";
+
   MatchesI curMatche;
+  void initState() {
+    dataSelect = "Houses"; 
+    super.initState();
+  }
 
   getMatches() {
+    if(dataSelect == "Houses"){
     return Firestore.instance.collection(collectionName).snapshots();
+    }else {
+       return Firestore.instance.collection(collectionName1).snapshots();
+    }
   }
 
   addMatche() {
@@ -115,13 +131,37 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Widget buildUserTile(BuildContext contex, DocumentSnapshot user) {
     print("data is ${user.data}");
-    return vaweCard(
+  return  dataSelect == "Issues" ?
+     buildListItem(
             context,
             user.data['title'],
             200,
             1,
             Colors.grey.shade100,
             Color(0xFF716cff),
+          ) : vaweCard (
+            context,
+            user.data['title'],
+            "panta Street",
+            1,
+            Colors.grey.shade100,
+            Color(0xFF716cff),
+          );
+
+
+
+          
+
+  }
+   Widget buildIssueTile(BuildContext contex, DocumentSnapshot user) {
+    print("data is ${user.data}");
+    return vaweCard(
+            context,
+            user.data['title'],
+            "panta Street",
+            1,
+            Colors.grey.shade100,
+            Colors.red,
           );
 
   }
@@ -135,6 +175,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
         }
         if (snapshot.hasData) {
           print("Documents ${snapshot.data.documents.length}");
+          List snData = snapshot.data.documents;
+
         // return  ListTile(
         //     title: Text("fhdfkdfdfk"),
         //   );
@@ -145,8 +187,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
             padding: EdgeInsets.zero,
             itemExtent: 80.0,
             itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) =>
-            buildUserTile(context,snapshot.data.documents[index] ),
+            itemBuilder: (context, index) =>            buildUserTile(context,snapshot.data.documents[index] ),
           );
           // return buildList(context, snapshot.data.documents);
         }
@@ -156,34 +197,40 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Widget buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-    return ListView(
-      children: snapshot.map((data) => buildListItem(context, data)).toList(),
-    );
+    // return ListView(
+    //   children: snapshot.map((data) => buildListItem(context, data)).toList(),
+    // );
   }
 
-  Widget buildListItem(BuildContext context, DocumentSnapshot data) {
-    final user = MatchesI.fromSnapshot(data);
+  Widget buildListItem(BuildContext context, String name, double amount, int type,
+      Color fillColor, Color bgColor) {
+    // final user = MatchesI.fromSnapshot(data);
     return Padding(
-      key: ValueKey(user.title),
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      key: ValueKey(name),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: ListTile(
-          title: Text(user.title),
-          trailing: IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              // delete
-              delete(user);
-            },
-          ),
-          onTap: () {
+          title: Text(name),
+          trailing: FlatButton(
+            color:Colors.redAccent,
+            shape:RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+
+            ),
+            child: Text("Action", style: TextStyle(color: Colors.white),),
+          
+          onPressed: () {
+            print("inside caction");
+             Navigator.pushNamed(context, '/issueDetails');
+
             // update
-            setUpdateUI(user);
+            // setUpdateUI(user);
           },
+        )
         ),
       ),
     );
@@ -223,19 +270,83 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ],
                   );
     }
+
+      Widget memberbuildForm(BuildContext context) {
+     return   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                            labelText: "Name", hintText: "Name"),
+                      ),
+                      TextFormField(
+                        controller: _prize,
+                        decoration: InputDecoration(
+                            labelText: "PersonId", hintText: "Id"),
+                      ),
+                      TextFormField(
+                        controller: _fee,
+                        decoration: InputDecoration(
+                            labelText: "Place", hintText: "address"),
+                      ),
+                       TextFormField(
+                        controller: _date,
+                        decoration: InputDecoration(
+                            labelText: "Date", hintText: "Match Date"),
+                      ),
+                       TextFormField(
+                        controller: _status,
+                        decoration: InputDecoration(
+                            labelText: "Status", hintText: "ongoing/closed/open,waiting"),
+                      ),
+                      // button(),
+                    ],
+                  );
+    }
 // user defined function
-  void _showDialog() {
+  void _showDialog(dilogCategory) {
     // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
-        return AlertDialog(
+        return dilogCategory == "Add Issues" ? AlertDialog(
           title: new Text("Create Issue",style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         )),
-          content: buildForm(context),
+          content:  buildForm(context),
+          actions: <Widget>[
+
+            
+            // usually buttons at the bottom of the dialog
+            Row(
+              children: <Widget>[
+
+                
+                new FlatButton(
+                  child: new Text("Save"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                new FlatButton(
+                  child: new Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ) : AlertDialog(
+          title: new Text(dilogCategory,style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        )),
+          content: memberbuildForm(context),
           actions: <Widget>[
 
             
@@ -260,6 +371,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
             ),
           ],
         );
+
       },
     );
   }
@@ -410,12 +522,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         physics: ClampingScrollPhysics(),
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,
-                        itemCount: 10,
+                        itemCount: 0,
                         itemBuilder: (BuildContext context, int index) {
                           return vaweCard(
             context,
             "Ram Prasad",
-            200,
+            "panta Street",
             1,
             Colors.grey.shade100,
             Color(0xFF716cff),
@@ -442,12 +554,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           );
                         },
                         padding: EdgeInsets.zero,
-                        itemCount: 10,
+                        itemCount: 0,
                         itemBuilder: (BuildContext context, int index) {
                           return vaweCard(
             context,
             "Ram Prasad",
-            200,
+            "panta Street",
             1,
             Colors.grey.shade100,
             Color(0xFF716cff),
@@ -457,176 +569,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                   ],
                 ),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Spending",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Varela",
-                  ),
-                ),
-                TextSpan(
-                  text: "    July 2018",
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    fontFamily: "Varela",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              top: 15,
-              right: 20,
-            ),
-            height:
-                screenAwareSize(_media.longestSide <= 775 ? 180 : 130, context),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade100,
-                  blurRadius: 6,
-                  spreadRadius: 10,
-                )
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: 180,
-                  width: 160,
-                  child: DonutPieChart(
-                    series,
-                    animate: true,
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 15,
-                      ),
-                      donutCard(Colors.indigo, "Home"),
-                      donutCard(Colors.yellow, "Food & Drink"),
-                      donutCard(Colors.greenAccent, "Hotel & Restaurant"),
-                      donutCard(Colors.pinkAccent, "Travelling"),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Budgets",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Varela",
-                  ),
-                ),
-                TextSpan(
-                  text: "    July",
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    fontFamily: "Varela",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              top: 15,
-              right: 20,
-            ),
-            padding: EdgeInsets.all(10),
-            height: screenAwareSize(45, context),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade100,
-                  blurRadius: 6,
-                  spreadRadius: 10,
-                )
-              ],
-            ),
-            child: LinearPercentIndicator(
-              width: screenAwareSize(
-                  _media.width - (_media.longestSide <= 775 ? 100 : 160),
-                  context),
-              lineHeight: 20.0,
-              percent: 0.68,
-              backgroundColor: Colors.grey.shade300,
-              progressColor: Color(0xFF1b52ff),
-              animation: true,
-              animateFromLastPercent: true,
-              alignment: MainAxisAlignment.spaceEvenly,
-              animationDuration: 1000,
-              linearStrokeCap: LinearStrokeCap.roundAll,
-              center: Text(
-                "68.0%",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Text(
-            "Cash flow",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              inherit: true,
-              letterSpacing: 0.4,
-            ),
-          ),
-          vaweCard(
-            context,
-            "Earned",
-            200,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
-          ),
-          vaweCard(
-            context,
-            "Spent",
-            3210,
-            -1,
-            Colors.grey.shade100,
-            Color(0xFFff596b),
-          ),
+      
+       
+         
         ],
       ),
     );
   }
 
-  Widget vaweCard(BuildContext context, String name, double amount, int type,
+  Widget vaweCard(BuildContext context, String name, String address, int type,
       Color fillColor, Color bgColor) {
     return Container(
       margin: EdgeInsets.only(
@@ -657,12 +608,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 screenAwareSize(45, context),
                 fillColor,
                 bgColor,
-                67,
+                6,
               ),
               Text(
-                "80%",
+                "pic",
                 style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -682,7 +633,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 height: 8,
               ),
               Text(
-                "${type > 0 ? "" : "-"} \$ ${amount.toString()}",
+                address,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black,
@@ -690,11 +641,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 ),
               )
             ],
-          )
+          ),
+          
         ],
       ),
     );
   }
+
+
 
   Widget donutCard(Color color, String text) {
     return Row(
@@ -799,75 +753,92 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                       SizedBox(height: 15.0),
                                       Row(
                                         children: <Widget>[
+                                          GestureDetector(
+  onTap: () {
+    print("issues is tapped");
+    setState(() {
+      dataSelect = "Houses"; 
+    });
+  },
+  child: 
+                                           new Container(
+                                             height: 58.0,
+                                        width: 100.0,
+     color:dataSelect == "Houses" ? Colors.white :  Color(0xFF1b5bff),
+    child:
                                           Column(
                                             children: <Widget>[
+                                             SizedBox(height: 5.0),
                                               Text(
-                                                '18',
+                                                '7',
                                                 style: TextStyle(
                                                     fontFamily: 'Montserrat',
                                                     fontSize: 20.0,
                                                     fontWeight:
                                                         FontWeight.bold,
-                                                        color: Colors.white),
+                                                         color: dataSelect == "Houses" ?  Color(0xFF1b5bff): Colors.white),
                                               ),
                                               SizedBox(height: 7.0),
-                                              Text(
-                                                'HOUSES',
+                                  Text(
+                                                'Houses',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
-                                                  color: Colors.white
+                                                  color: dataSelect == "Houses" ?  Color(0xFF1b5bff): Colors.white
                                                 ),
-                                              )
+                                              ),
+                                              SizedBox(height: 2.0),
+                                              
+                                              
                                             ],
                                           ),
+                                           )
+                                              ),
                                           SizedBox(width: 25.0),
+                                              GestureDetector(
+  onTap: () {
+    print("issues is tapped");
+    setState(() {
+      dataSelect = "Issues"; 
+    });
+  },
+  child: 
+                                           new Container(
+                                             height: 58.0,
+                                        width: 100.0,
+     color:dataSelect == "Issues" ? Colors.white : Color(0xFF1b5bff),
+    child:
                                           Column(
                                             children: <Widget>[
+                                             SizedBox(height: 5.0),
                                               Text(
-                                                '18',
+                                                '2',
                                                 style: TextStyle(
                                                     fontFamily: 'Montserrat',
                                                     fontSize: 20.0,
                                                     fontWeight:
                                                         FontWeight.bold,
-                                                        color: Colors.white),
+                                                        color: dataSelect == "Issues" ?  Color(0xFF1b5bff): Colors.white ),
                                               ),
                                               SizedBox(height: 7.0),
-                                              Text(
-                                                'ISSUES',
+                                  Text(
+                                                'Issues',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
-                                                  color: Colors.white
+                                                  color: dataSelect == "Issues" ?  Color(0xFF1b5bff): Colors.white
                                                 ),
-                                              )
+                                              ),
+                                              SizedBox(height: 2.0),
+                                              
+                                              
                                             ],
                                           ),
-                                          SizedBox(width: 25.0),
-                                          Column(
-                                            children: <Widget>[
-                                              Text(
-                                                '18',
-                                                style: TextStyle(
-                                                    fontFamily: 'Montserrat',
-                                                    fontSize: 20.0,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                        color: Colors.white),
+                                           )
                                               ),
-                                              SizedBox(height: 7.0),
-                                              Text(
-                                                'candidates',
-                                                style: TextStyle(
-                                                  fontFamily: 'Montserrat',
-                                                  fontSize: 16.0,
-                                                  color: Colors.white
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                        ],
+                                          SizedBox(width: 25.0),
+                                          
+                                                        ],
                                       )
                                     ],
                                   ),
@@ -948,12 +919,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
             ),
             onPressed: () {
               print("add money");
-              // Navigator.pushNamed(context,'/razorPay_home');
-              
-    // Navigator.pushNamed(context, '/dashboardYsr');
+
+               if( dispText == "Add Issues") {
+                  Navigator.pushNamed(context, '/addIssue');
+               }else {
+                  Navigator.pushNamed(context, '/addFamily');
+               }
   
-             _showDialog();
-              // Navigator.pushNamed(context,'/scratchCard');
+              //  _showDialog(dispText);
+             
             },
             iconSize: 40.0,
           ),

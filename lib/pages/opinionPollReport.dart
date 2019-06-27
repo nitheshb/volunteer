@@ -29,13 +29,13 @@ var series = [
   ),
 ];
 
-class SupervisorDash extends StatefulWidget {
+class OpinionPollDash extends StatefulWidget {
 
   @override
   _SupervisorDashState createState() => _SupervisorDashState();
 }
 
-class _SupervisorDashState extends State<SupervisorDash> {
+class _SupervisorDashState extends State<OpinionPollDash> {
    bool showTextField = false;
 
   TextEditingController controller = TextEditingController();
@@ -310,7 +310,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
             height: 0,
           ),
           Text(
-            "My Supervisor Board",
+            "Nellore District Opinion Pools",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -320,193 +320,36 @@ class _SupervisorDashState extends State<SupervisorDash> {
           ),
           Row(
             children: <Widget>[
-              colorCard("Cash", 35.170, 1, context, Color(0xFFff3f5e)),
+              colorCard("Ration: Old Rice vs New Rice","", 35.170, 1, context, Colors.greenAccent),
+              
+              // colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              colorCard("How is the quality of newly introduced rice","", 35.170, 1, context, Colors.greenAccent),
+              
               // colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
             ],
           ),
           SizedBox(
-            height: 30,
+            height: 10,
           ),
-          Container(
-                  margin: EdgeInsets.only(left: 0, bottom : 10),
-                  height: screenAwareSize(
-                      _media.longestSide <= 775 ? 110 : 80, context),
-                  child: NotificationListener<OverscrollIndicatorNotification>(
-                    onNotification: (overscroll) {
-                      overscroll.disallowGlow();
-                    },
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 2,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index == 0) {
-                          return Padding(
-                              padding: EdgeInsets.only(right: 10),
-                              child: AddItemsButton(context, "Add Volunteer"));
-                        }
-
-                        return Padding(
-                          padding: EdgeInsets.only(right: 20),
-                          child: AddItemsButton(context, "Add Issues"),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 5.0, bottom: 15, right: 20, top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "All",
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Issues",
-                        style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Old Issues",
-                        style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Corruption",
-                        style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                      Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-      margin: EdgeInsets.only(
-        top: 5,
-        right: 20,
-      ),
-      padding: EdgeInsets.only(left: 0),
-      height: screenAwareSize(80, context),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 6,
-            spreadRadius: 10,
-          )
-        ],
-      ),
-      child:
-                Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextField(
-                onChanged: (value) {
-                  
-                },
-                // controller: editingController,
-                decoration: InputDecoration(
-                    labelText: "Search",
-                    hintText: "Search",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)))),
-              ),
-            ),
-                ),
-                buildBody(context),
-                 Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                      },
-                      child: ListView.builder(
-                        physics: ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int index) {
-                          return vaweCard(
-            context,
-            "Volunteer ${index}",
-            "Ward ${index}, Pantastreet, Atmakur",
-            0,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
-          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                      },
-                      child: ListView.separated(
-                        physics: ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 85.0),
-                            child: Divider(),
-                          );
-                        },
-                        padding: EdgeInsets.zero,
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int index) {
-                          return vaweCard(
-            context,
-            "Ram Prasad",
-            "Ward 1, Pantastreet, Atmakur",
-            200,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
-          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+           Row(
+            children: <Widget>[
+              colorCard("Will you send kid to government School,", "if van is arranged ?",35.170, 1, context, Colors.greenAccent),
+              
+              // colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
+            ],
+          ),
+  
+                
+           SizedBox(height: 20.0,),
           RichText(
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "Spending",
+                  text: "Detail Stats of Rice Taste",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 24,
@@ -564,10 +407,10 @@ class _SupervisorDashState extends State<SupervisorDash> {
                       SizedBox(
                         height: 15,
                       ),
-                      donutCard(Colors.indigo, "Home"),
-                      donutCard(Colors.yellow, "Food & Drink"),
-                      donutCard(Colors.greenAccent, "Hotel & Restaurant"),
-                      donutCard(Colors.pinkAccent, "Travelling"),
+                      donutCard(Colors.indigo, "Women"),
+                      donutCard(Colors.yellow, "Men"),
+                      donutCard(Colors.greenAccent, "Old age"),
+                      donutCard(Colors.pinkAccent, "Children"),
                     ],
                   ),
                 )
@@ -638,36 +481,8 @@ class _SupervisorDashState extends State<SupervisorDash> {
               ),
             ),
           ),
-          SizedBox(
-            height: 30,
-          ),
-          Text(
-            "Cash flow",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              inherit: true,
-              letterSpacing: 0.4,
-            ),
-          ),
-          vaweCard(
-            context,
-            "Earned",
-            "Ward 1, Pantastreet, Atmakur",
-            200,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
-          ),
-          vaweCard(
-            context,
-            "Spent",
-            "Ward 1, Pantastreet, Atmakur",
-            3210,
-            -1,
-            Colors.grey.shade100,
-            Color(0xFFff596b),
-          ),
+         
+        
         ],
       ),
     );
@@ -784,7 +599,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
   }
 
   Widget colorCard(
-      String text, double amount, int type, BuildContext context, Color color) {
+      String text, String text2, double amount, int type, BuildContext context, Color color) {
     final _media = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.only(top: 15, right: 15),
@@ -815,33 +630,24 @@ class _SupervisorDashState extends State<SupervisorDash> {
                   Container(
                     child:Row(
                       children: <Widget>[
-                        Container(
-                          height: 60.0,
-                          width: 60.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            image: DecorationImage(
-                              image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv_3-VQYY9MUWdAZsnxGQcZdtvkSaUi41WarfXBuZ4qEH15gucRSaJY8-thzmMSfpGwn0WYVk'),
-                              fit: BoxFit.cover
-                            )
-                          ),
-                        ),
+                       
                         SizedBox(width: 5.0),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text('Shakib Al Hasan',
+                            Text(text, 
                             style: TextStyle(
-                              fontSize: 22.0,
-                              color: Colors.white,
+                              fontSize: 16.0,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold
                             )
                             ),
                             SizedBox(height: 5.0),
-                            Text('Panta Street, Atmakur...',
+                            Text(text2,
                             style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.white
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold
                             )
                             )
                           ],
@@ -857,17 +663,17 @@ class _SupervisorDashState extends State<SupervisorDash> {
                                           Column(
                                             children: <Widget>[
                                               Text(
-                                                '18',
+                                                '13.5 lakh',
                                                 style: TextStyle(
                                                     fontFamily: 'Montserrat',
                                                     fontSize: 20.0,
                                                     fontWeight:
                                                         FontWeight.bold,
-                                                        color: Colors.white),
+                                                        color: Colors.blueAccent),
                                               ),
                                               SizedBox(height: 7.0),
                                               Text(
-                                                'Volunteers',
+                                                'Yes',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
@@ -880,17 +686,17 @@ class _SupervisorDashState extends State<SupervisorDash> {
                                           Column(
                                             children: <Widget>[
                                               Text(
-                                                '18',
+                                                '50k',
                                                 style: TextStyle(
                                                     fontFamily: 'Montserrat',
                                                     fontSize: 20.0,
                                                     fontWeight:
                                                         FontWeight.bold,
-                                                        color: Colors.white),
+                                                        color: Colors.yellowAccent),
                                               ),
                                               SizedBox(height: 7.0),
                                               Text(
-                                                'Issues',
+                                                'No',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
@@ -899,52 +705,35 @@ class _SupervisorDashState extends State<SupervisorDash> {
                                               )
                                             ],
                                           ),
+                                           SizedBox(width: 25.0),
+                                          Column(
+                                            children: <Widget>[
+                                              Text(
+                                                '10k',
+                                                style: TextStyle(
+                                                    fontFamily: 'Montserrat',
+                                                    fontSize: 20.0,
+                                                    fontWeight:
+                                                        FontWeight.bold,
+                                                        color: Colors.pink[300]),
+                                              ),
+                                              SizedBox(height: 7.0),
+                                              Text(
+                                                'Women',
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  fontSize: 16.0,
+                                                  color: Colors.white
+                                                ),
+                                              )
+                                            ],
+                                          )
                                         
                                         ],
                                       )
                                     ],
                                   ),
-                                  Column(
-                                    children: <Widget>[
-                                      SizedBox(height: 15.0),
-                                      Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                            size: 15.0,
-                                          ),
-                                          Text(
-                                            '4.9',
-                                            style: TextStyle(
-                                                fontFamily: 'Montserrat',
-                                                fontSize: 14.0,
-                                                color: Colors.amber,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(height: 20.0),
-                                      Container(
-                                        height: 30.0,
-                                        width: 30.0,
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFFff596b),
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        child: Center(
-                                       child:   GestureDetector(
-  onTap: () {
-    Navigator.pushNamed(context, '/oldHome');
-  },
-  child: Icon(Icons.send,
-  color: Colors.white, size: 14.0),
-),
-                     
-                                        ),
-                                      )
-                                    ],
-                                  )
+                                
                                       ],
                                     ),
     );

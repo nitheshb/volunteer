@@ -12,6 +12,10 @@ import 'package:test_app_1/widgets/percent_indicator.dart';
 import 'package:test_app_1/widgets/user_card.dart';
 import 'package:test_app_1/widgets/wave_progress.dart';
 
+
+
+
+  
 var data = [
   new DataPerItem('Home', 35, Colors.greenAccent),
   new DataPerItem('Food & Drink', 25, Colors.yellow),
@@ -29,13 +33,14 @@ var series = [
   ),
 ];
 
-class SupervisorDash extends StatefulWidget {
+class VolunteerStats extends StatefulWidget {
 
   @override
-  _SupervisorDashState createState() => _SupervisorDashState();
+  _MyProfilePageState createState() => _MyProfilePageState();
 }
 
-class _SupervisorDashState extends State<SupervisorDash> {
+class _MyProfilePageState extends State<VolunteerStats> {
+
    bool showTextField = false;
 
   TextEditingController controller = TextEditingController();
@@ -54,14 +59,25 @@ class _SupervisorDashState extends State<SupervisorDash> {
 
   TextEditingController _teamId = TextEditingController();
 
-  String collectionName = "Volunteers";
+  String collectionName = "Matches";
+  String collectionName1 = "Issues";
 
   bool isEditing = false;
 
+  String dataSelect = "Houses";
+
   MatchesI curMatche;
+  void initState() {
+    dataSelect = "Houses"; 
+    super.initState();
+  }
 
   getMatches() {
+    if(dataSelect == "Houses"){
     return Firestore.instance.collection(collectionName).snapshots();
+    }else {
+       return Firestore.instance.collection(collectionName1).snapshots();
+    }
   }
 
   addMatche() {
@@ -115,14 +131,39 @@ class _SupervisorDashState extends State<SupervisorDash> {
 
   Widget buildUserTile(BuildContext contex, DocumentSnapshot user) {
     print("data is ${user.data}");
-    return vaweCard(
+  return  dataSelect == "Issues" ?
+     buildListItem(
             context,
-            user.data['Name'],
-            user.data['Address'],
-            int.parse(user.data['Issues']),
+            user.data['title'],
+            200,
             1,
             Colors.grey.shade100,
-            Color(0xFFff596b),
+            Color(0xFF716cff),
+          ) : vaweCard (
+            context,
+            user.data['title'],
+            "Ward-8,pantasteet,Atmakur",
+            200,
+            1,
+            Colors.grey.shade100,
+            Color(0xFF716cff),
+          );
+
+
+
+          
+
+  }
+   Widget buildIssueTile(BuildContext contex, DocumentSnapshot user) {
+    print("data is ${user.data}");
+    return vaweCard(
+            context,
+            user.data['title'],
+            "Ward-8,pantasteet,Atmakur",
+            200,
+            1,
+            Colors.grey.shade100,
+            Colors.red,
           );
 
   }
@@ -136,6 +177,8 @@ class _SupervisorDashState extends State<SupervisorDash> {
         }
         if (snapshot.hasData) {
           print("Documents ${snapshot.data.documents.length}");
+          List snData = snapshot.data.documents;
+
         // return  ListTile(
         //     title: Text("fhdfkdfdfk"),
         //   );
@@ -146,8 +189,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
             padding: EdgeInsets.zero,
             itemExtent: 80.0,
             itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) =>
-            buildUserTile(context,snapshot.data.documents[index] ),
+            itemBuilder: (context, index) =>            buildUserTile(context,snapshot.data.documents[index] ),
           );
           // return buildList(context, snapshot.data.documents);
         }
@@ -162,7 +204,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
     // );
   }
 
-   Widget buildListItem(BuildContext context, String name, double amount, int type,
+  Widget buildListItem(BuildContext context, String name, double amount, int type,
       Color fillColor, Color bgColor) {
     // final user = MatchesI.fromSnapshot(data);
     return Padding(
@@ -204,6 +246,41 @@ class _SupervisorDashState extends State<SupervisorDash> {
                       TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
+                            labelText: "సమస్య", hintText: "pension"),
+                      ),
+                      TextFormField(
+                        controller: _prize,
+                        decoration: InputDecoration(
+                            labelText: "PersonId", hintText: "atk12345"),
+                      ),
+                      TextFormField(
+                        controller: _fee,
+                        decoration: InputDecoration(
+                            labelText: "Description", hintText: "Reason about issue"),
+                      ),
+                       TextFormField(
+                        controller: _date,
+                        decoration: InputDecoration(
+                            labelText: "Date", hintText: "Match Date"),
+                      ),
+                       TextFormField(
+                        controller: _status,
+                        decoration: InputDecoration(
+                            labelText: "Status", hintText: "ongoing/closed/open,waiting"),
+                      ),
+                      // button(),
+                    ],
+                  );
+    }
+
+      Widget memberbuildForm(BuildContext context) {
+     return   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        controller: controller,
+                        decoration: InputDecoration(
                             labelText: "Name", hintText: "Name"),
                       ),
                       TextFormField(
@@ -231,18 +308,47 @@ class _SupervisorDashState extends State<SupervisorDash> {
                   );
     }
 // user defined function
-  void _showDialog() {
+  void _showDialog(dilogCategory) {
     // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Create New volunteer",style: TextStyle(
+        return dilogCategory == "Add Issues" ? AlertDialog(
+          title: new Text("Create Issue",style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         )),
-          content: buildForm(context),
+          content:  buildForm(context),
+          actions: <Widget>[
+
+            
+            // usually buttons at the bottom of the dialog
+            Row(
+              children: <Widget>[
+
+                
+                new FlatButton(
+                  child: new Text("Save"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                new FlatButton(
+                  child: new Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ) : AlertDialog(
+          title: new Text(dilogCategory,style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        )),
+          content: memberbuildForm(context),
           actions: <Widget>[
 
             
@@ -267,6 +373,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
             ),
           ],
         );
+
       },
     );
   }
@@ -290,7 +397,6 @@ class _SupervisorDashState extends State<SupervisorDash> {
             showTextField = false;
           });
         },
-        
       ),
     );
   }
@@ -310,7 +416,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
             height: 0,
           ),
           Text(
-            "My Supervisor Board",
+            "My Volunteer Board",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -318,130 +424,10 @@ class _SupervisorDashState extends State<SupervisorDash> {
               letterSpacing: 0.4,
             ),
           ),
-          Row(
-            children: <Widget>[
-              colorCard("Cash", 35.170, 1, context, Color(0xFFff3f5e)),
-              // colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
-            ],
-          ),
+      
           SizedBox(
             height: 30,
           ),
-          Container(
-                  margin: EdgeInsets.only(left: 0, bottom : 10),
-                  height: screenAwareSize(
-                      _media.longestSide <= 775 ? 110 : 80, context),
-                  child: NotificationListener<OverscrollIndicatorNotification>(
-                    onNotification: (overscroll) {
-                      overscroll.disallowGlow();
-                    },
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 2,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index == 0) {
-                          return Padding(
-                              padding: EdgeInsets.only(right: 10),
-                              child: AddItemsButton(context, "Add Volunteer"));
-                        }
-
-                        return Padding(
-                          padding: EdgeInsets.only(right: 20),
-                          child: AddItemsButton(context, "Add Issues"),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 5.0, bottom: 15, right: 20, top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "All",
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Issues",
-                        style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Old Issues",
-                        style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Corruption",
-                        style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                      Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-      margin: EdgeInsets.only(
-        top: 5,
-        right: 20,
-      ),
-      padding: EdgeInsets.only(left: 0),
-      height: screenAwareSize(80, context),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 6,
-            spreadRadius: 10,
-          )
-        ],
-      ),
-      child:
-                Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextField(
-                onChanged: (value) {
-                  
-                },
-                // controller: editingController,
-                decoration: InputDecoration(
-                    labelText: "Search",
-                    hintText: "Search",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)))),
-              ),
-            ),
-                ),
-                buildBody(context),
                  Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -453,45 +439,12 @@ class _SupervisorDashState extends State<SupervisorDash> {
                         physics: ClampingScrollPhysics(),
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int index) {
-                          return vaweCard(
-            context,
-            "Volunteer ${index}",
-            "Ward ${index}, Pantastreet, Atmakur",
-            0,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
-          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                      },
-                      child: ListView.separated(
-                        physics: ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 85.0),
-                            child: Divider(),
-                          );
-                        },
-                        padding: EdgeInsets.zero,
-                        itemCount: 10,
+                        itemCount: 1,
                         itemBuilder: (BuildContext context, int index) {
                           return vaweCard(
             context,
             "Ram Prasad",
-            "Ward 1, Pantastreet, Atmakur",
+            "Ward-8,pantasteet,Atmakur",
             200,
             1,
             Colors.grey.shade100,
@@ -502,11 +455,13 @@ class _SupervisorDashState extends State<SupervisorDash> {
                     ),
                   ],
                 ),
+              SizedBox(height: 10.0,),
+
           RichText(
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "Spending",
+                  text: "Ticket Stats",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 24,
@@ -515,7 +470,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
                   ),
                 ),
                 TextSpan(
-                  text: "    July 2018",
+                  text: "July 2019",
                   style: TextStyle(
                     color: Colors.grey.shade400,
                     fontWeight: FontWeight.w700,
@@ -564,10 +519,10 @@ class _SupervisorDashState extends State<SupervisorDash> {
                       SizedBox(
                         height: 15,
                       ),
-                      donutCard(Colors.indigo, "Home"),
-                      donutCard(Colors.yellow, "Food & Drink"),
-                      donutCard(Colors.greenAccent, "Hotel & Restaurant"),
-                      donutCard(Colors.pinkAccent, "Travelling"),
+                      donutCard(Colors.indigo, "Aadhar"),
+                      donutCard(Colors.yellow, "Badi Bata"),
+                      donutCard(Colors.greenAccent, "Arogya Sri"),
+                      donutCard(Colors.pinkAccent, "open Issues"),
                     ],
                   ),
                 )
@@ -577,72 +532,8 @@ class _SupervisorDashState extends State<SupervisorDash> {
           SizedBox(
             height: 30,
           ),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Budgets",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Varela",
-                  ),
-                ),
-                TextSpan(
-                  text: "    July",
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    fontFamily: "Varela",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              top: 15,
-              right: 20,
-            ),
-            padding: EdgeInsets.all(10),
-            height: screenAwareSize(45, context),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade100,
-                  blurRadius: 6,
-                  spreadRadius: 10,
-                )
-              ],
-            ),
-            child: LinearPercentIndicator(
-              width: screenAwareSize(
-                  _media.width - (_media.longestSide <= 775 ? 100 : 160),
-                  context),
-              lineHeight: 20.0,
-              percent: 0.68,
-              backgroundColor: Colors.grey.shade300,
-              progressColor: Color(0xFF1b52ff),
-              animation: true,
-              animateFromLastPercent: true,
-              alignment: MainAxisAlignment.spaceEvenly,
-              animationDuration: 1000,
-              linearStrokeCap: LinearStrokeCap.roundAll,
-              center: Text(
-                "68.0%",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
           Text(
-            "Cash flow",
+            "Open Issues",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -652,8 +543,8 @@ class _SupervisorDashState extends State<SupervisorDash> {
           ),
           vaweCard(
             context,
-            "Earned",
-            "Ward 1, Pantastreet, Atmakur",
+            "Oldage Pension Not Received",
+            "Esclated To Incharge",
             200,
             1,
             Colors.grey.shade100,
@@ -661,9 +552,18 @@ class _SupervisorDashState extends State<SupervisorDash> {
           ),
           vaweCard(
             context,
-            "Spent",
-            "Ward 1, Pantastreet, Atmakur",
-            3210,
+            "New Badi Bata Application",
+            "Application Submitted by Volunteer",
+            10,
+            -1,
+            Colors.grey.shade100,
+            Color(0xFFff596b),
+          ),
+          vaweCard(
+            context,
+            "Arogya Sri Approval",
+            "Pending at Grama Sachivalayam",
+            200,
             -1,
             Colors.grey.shade100,
             Color(0xFFff596b),
@@ -673,15 +573,9 @@ class _SupervisorDashState extends State<SupervisorDash> {
     );
   }
 
-  Widget vaweCard(BuildContext context, String name, String address, int amount, int type,
-      Color fillColor, Color bgColor1) {
-
-        var bgColor = amount == 0 ?  Colors.greenAccent : Color(0xFFff596b) ;
-    return GestureDetector(
-  onTap: () {
-    Navigator.pushNamed(context, '/volunteerStats');
-  },
-  child:  Container(
+  Widget vaweCard(BuildContext context, String name, String status, double amount, int type,
+      Color fillColor, Color bgColor) {
+    return Container(
       margin: EdgeInsets.only(
         top: 5,
         right: 20,
@@ -710,16 +604,12 @@ class _SupervisorDashState extends State<SupervisorDash> {
                 screenAwareSize(45, context),
                 fillColor,
                 bgColor,
-                0,
+                67,
               ),
               Text(
-                amount.toString(),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                )
-               
+                "80%",
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -733,23 +623,28 @@ class _SupervisorDashState extends State<SupervisorDash> {
               Text(
                 name,
                 style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+                    TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 8,
               ),
               Text(
-                "${address.toString()}",
-                 style:
-                    TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+                status,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               )
             ],
-          )
+          ),
+          
         ],
       ),
-    )
     );
   }
+
+
 
   Widget donutCard(Color color, String text) {
     return Row(
@@ -821,7 +716,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30.0),
                             image: DecorationImage(
-                              image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv_3-VQYY9MUWdAZsnxGQcZdtvkSaUi41WarfXBuZ4qEH15gucRSaJY8-thzmMSfpGwn0WYVk'),
+                              image: NetworkImage('http://t1.gstatic.com/images?q=tbn:ANd9GcR_XkfDWQpnP4FqejGDaDo4xBXo9dFzLJgrQH0-HWdyG9-mhiBDP_Gx311LYemlGyOUt15_1vk'),
                               fit: BoxFit.cover
                             )
                           ),
@@ -830,7 +725,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text('Shakib Al Hasan',
+                            Text('Arjuna',
                             style: TextStyle(
                               fontSize: 22.0,
                               color: Colors.white,
@@ -854,53 +749,92 @@ class _SupervisorDashState extends State<SupervisorDash> {
                                       SizedBox(height: 15.0),
                                       Row(
                                         children: <Widget>[
+                                          GestureDetector(
+  onTap: () {
+    print("issues is tapped");
+    setState(() {
+      dataSelect = "Houses"; 
+    });
+  },
+  child: 
+                                           new Container(
+                                             height: 58.0,
+                                        width: 100.0,
+     color:dataSelect == "Houses" ? Colors.white :  Color(0xFF1b5bff),
+    child:
                                           Column(
                                             children: <Widget>[
+                                             SizedBox(height: 5.0),
                                               Text(
-                                                '18',
+                                                '7',
                                                 style: TextStyle(
                                                     fontFamily: 'Montserrat',
                                                     fontSize: 20.0,
                                                     fontWeight:
                                                         FontWeight.bold,
-                                                        color: Colors.white),
+                                                         color: dataSelect == "Houses" ?  Color(0xFF1b5bff): Colors.white),
                                               ),
                                               SizedBox(height: 7.0),
-                                              Text(
-                                                'Volunteers',
+                                  Text(
+                                                'Houses',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
-                                                  color: Colors.white
+                                                  color: dataSelect == "Houses" ?  Color(0xFF1b5bff): Colors.white
                                                 ),
-                                              )
+                                              ),
+                                              SizedBox(height: 2.0),
+                                              
+                                              
                                             ],
                                           ),
+                                           )
+                                              ),
                                           SizedBox(width: 25.0),
+                                              GestureDetector(
+  onTap: () {
+    print("issues is tapped");
+    setState(() {
+      dataSelect = "Issues"; 
+    });
+  },
+  child: 
+                                           new Container(
+                                             height: 58.0,
+                                        width: 100.0,
+     color:dataSelect == "Issues" ? Colors.white : Color(0xFF1b5bff),
+    child:
                                           Column(
                                             children: <Widget>[
+                                             SizedBox(height: 5.0),
                                               Text(
-                                                '18',
+                                                '2',
                                                 style: TextStyle(
                                                     fontFamily: 'Montserrat',
                                                     fontSize: 20.0,
                                                     fontWeight:
                                                         FontWeight.bold,
-                                                        color: Colors.white),
+                                                        color: dataSelect == "Issues" ?  Color(0xFF1b5bff): Colors.white ),
                                               ),
                                               SizedBox(height: 7.0),
-                                              Text(
+                                  Text(
                                                 'Issues',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
-                                                  color: Colors.white
+                                                  color: dataSelect == "Issues" ?  Color(0xFF1b5bff): Colors.white
                                                 ),
-                                              )
+                                              ),
+                                              SizedBox(height: 2.0),
+                                              
+                                              
                                             ],
                                           ),
-                                        
-                                        ],
+                                           )
+                                              ),
+                                          SizedBox(width: 25.0),
+                                          
+                                                        ],
                                       )
                                     ],
                                   ),
@@ -929,13 +863,13 @@ class _SupervisorDashState extends State<SupervisorDash> {
                                         height: 30.0,
                                         width: 30.0,
                                         decoration: BoxDecoration(
-                                            color: Color(0xFFff596b),
+                                            color: Color(0xFF2560FA),
                                             borderRadius:
                                                 BorderRadius.circular(10.0)),
                                         child: Center(
                                        child:   GestureDetector(
   onTap: () {
-    Navigator.pushNamed(context, '/oldHome');
+    Navigator.pushNamed(context, '/superviseDash');
   },
   child: Icon(Icons.send,
   color: Colors.white, size: 14.0),
@@ -960,7 +894,7 @@ class _SupervisorDashState extends State<SupervisorDash> {
         borderRadius: BorderRadius.circular(8.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.pink.shade50,
+            color: Colors.lightBlue.shade50,
             blurRadius: 8.0,
             spreadRadius: 4,
           ),
@@ -977,16 +911,19 @@ class _SupervisorDashState extends State<SupervisorDash> {
           IconButton(
             icon: Icon(
               Icons.add_circle,
-              color: Colors.pinkAccent,
+              color: Colors.blue,
             ),
             onPressed: () {
               print("add money");
-              // Navigator.pushNamed(context,'/razorPay_home');
-              
-    // Navigator.pushNamed(context, '/dashboardYsr');
+
+               if( dispText == "Add Issues") {
+                  Navigator.pushNamed(context, '/addIssue');
+               }else {
+                  Navigator.pushNamed(context, '/addFamily');
+               }
   
-              _showDialog();
-              // Navigator.pushNamed(context,'/scratchCard');
+              //  _showDialog(dispText);
+             
             },
             iconSize: 40.0,
           ),

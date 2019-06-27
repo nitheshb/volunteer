@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:test_app_1/pages/addFamily.dart';
+import 'package:test_app_1/pages/addIssue.dart';
 import 'package:test_app_1/pages/auction_homeP.dart';
+import 'package:test_app_1/pages/issueDetails.dart';
 import 'package:test_app_1/pages/myProfileP.dart';
+import 'package:test_app_1/pages/opinionPollReport.dart';
 import 'package:test_app_1/pages/razorPayHome.dart';
 import 'package:test_app_1/pages/scratch_card.dart';
+import 'package:test_app_1/pages/statsHome.dart';
 import 'package:test_app_1/pages/superviserDash.dart';
+import 'package:test_app_1/pages/volunteerStats.dart';
 import 'package:test_app_1/pages/wallet_home.dart';
 import 'package:test_app_1/pages/ysrcpDashboardP.dart';
 import 'package:test_app_1/ui/screens/fixtures.dart';
@@ -44,7 +50,13 @@ class MyApp extends StatelessWidget {
         '/': (context) => YSRMainScreen(),
         '/dashboardYsr': (context) => YSRMainScreen(),
         '/volunteerDash': (context) => MyProfilePage(),
+        '/volunteerStats': (context) => VolunteerStats(),
+        '/addFamily': (context) => AddFamily(),
+        '/addIssue': (context) => AddIssue(),
+        '/issueDetails': (context) => IssueDetails_p(),
         '/superviseDash': (context) => SupervisorDash(),
+        '/liveStatsHome': (context) => StatsHome(),
+        '/opinionPool': (context) => OpinionPollDash(),
         '/oldHome': (context) => HomeScreen(),
         '/signin': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),
