@@ -442,12 +442,22 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      itemCount: 2,
+                      itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
-                        if (index == 0) {
+                        if (index == 0) { 
                           return Padding(
                               padding: EdgeInsets.only(right: 10),
                               child: AddItemsButton(context, "Add Person"));
+                        }
+                        if (index == 1) { 
+                          return Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: AddItemsButton(context, "Add Issues"));
+                        }
+                        if (index == 2) { 
+                          return Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: AddItemsButton(context, "Add Navatram"));
                         }
 
                         return Padding(
@@ -922,8 +932,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
                if( dispText == "Add Issues") {
                   Navigator.pushNamed(context, '/addIssue');
-               }else {
+               }else if( dispText == "Add Person") {
                   Navigator.pushNamed(context, '/addFamily');
+               }else {
+                  Navigator.pushNamed(context, '/addScheme');
                }
   
               //  _showDialog(dispText);

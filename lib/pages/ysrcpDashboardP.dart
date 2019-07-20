@@ -3,18 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:test_app_1/utils/screen_size.dart';
+import 'package:gradient_widgets/gradient_widgets.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'overlay.dart';
 
 var menuData = [
 {'name': 'Volunteer', 'routeString': '/volunteerDash'},
 {'name': 'Supervisor', 'routeString': '/superviseDash'},
-{'name': 'Leader', 'routeString': '/volunteerDash'},
+{'name': 'Leader', 'routeString': '/leaderView'},
 {'name': 'Live Stastics', 'routeString': '/liveStatsHome'},
 {'name': 'Opinion Polls', 'routeString': '/opinionPool'},
-{'name': 'Issues iSSUES iSS', 'routeString': '/volunteerDash'},
+{'name': 'Issues', 'routeString': '/volunteerDash'},
 {'name': 'Aspriants', 'routeString': '/volunteerDash'},
 {'name': 'Corruption', 'routeString': '/superviseDash'},
-{'name': 'Toll Free', 'routeString': '/volunteerDash'},
+{'name': 'Toll Free', 'routeString': '/smartMenu'},
 ];
 
 class YSRMainScreen extends StatefulWidget {
@@ -24,18 +26,72 @@ class YSRMainScreen extends StatefulWidget {
 
 class _YSRMainScreen extends State<YSRMainScreen> {
   OverlaySheet overlaySheet = new OverlaySheet();
+int _page = 0;
+  GlobalKey _bottomNavigationKey = GlobalKey();
 
+ Widget _buildBottomCard(double width, double height){
+    return Container(
+      width: width,
+      height: 70,
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+      decoration: BoxDecoration(
+        // color: Color(0XFFFA280F),
+        gradient: LinearGradient(
+          colors: [const Color(0xFF667eea  ),const Color(0xFF764ba2) ]
+        ),
+        // color: Color(0xFF1b5bff),
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(16),
+          topLeft: Radius.circular(16)
+        )
+      ),
+      child: _buildBottomCardChildren(),
+    );
+  }
+
+   Widget _buildBottomCardChildren(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+    
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            // _buildButton(Icons.radio_button_checked),
+            // _buildButton(Icons.home),
+            // _buildButton(Icons.settings),
+          ],
+        )
+      ],
+    );
+  }
+    Text _buildText(String title){
+    return Text(title,
+    style: TextStyle(
+      fontSize: 16,
+      color: Colors.white,
+      fontWeight: FontWeight.bold
+    ),
+    );
+  }
   
+  IconButton _buildButton(IconData icon){
+    return IconButton(
+      onPressed: (){},
+      icon: Icon(icon, color: Colors.white,),
+    );
+  }
   Widget AddItemsButton(BuildContext context, String dispText,  String routeUrl) {
     // print('---> data inside iconMaker')
       return Container(
        margin: EdgeInsets.only(right:10.0),
         child:Material
                     (
-                      elevation: 14.0,
-                      borderRadius: BorderRadius.circular(12.0),
-                      shadowColor: Color(0x802196F3),
-                      color: Colors.white,
+                      //  elevation: 14.0,
+                      // borderRadius: BorderRadius.circular(12.0),
+                      // shadowColor: Color(0x802196F3),
+                      // color: Colors.white,
                     
     child: Container(
       // margin: EdgeInsets.only(right: 10.0),
@@ -43,10 +99,19 @@ class _YSRMainScreen extends State<YSRMainScreen> {
       height: 120.0,
       alignment: Alignment.center,
       padding: EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-      
+       decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [const Color(0xFF667eea  ),const Color(0xFF764ba2) ]
+        ),
+
+        // color:Color(0xFF1b5bff),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 1
+          )
+        ]
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -58,8 +123,8 @@ class _YSRMainScreen extends State<YSRMainScreen> {
             style: TextStyle(
                 inherit: true,
                 fontWeight: FontWeight.bold,
-                fontSize: 14.0,
-                color: Colors.black45),
+                fontSize: 15.0,
+                color: Colors.white),
             textAlign: TextAlign.center,
           ),
         ],
@@ -71,28 +136,61 @@ class _YSRMainScreen extends State<YSRMainScreen> {
   @override
   Widget build(BuildContext context) {
      final _media = MediaQuery.of(context).size;
+     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       // backgroundColor: Color(0xFF1b5bff),
-      body: Column(
+      bottomNavigationBar: CurvedNavigationBar(
+          key: _bottomNavigationKey,
+          index: 0,
+          height: 50.0,
+          items: <Widget>[
+            Icon(Icons.add, size: 30),
+            Icon(Icons.list, size: 30),
+            Icon(Icons.compare_arrows, size: 30),
+            Icon(Icons.call_split, size: 30),
+            Icon(Icons.perm_identity, size: 30),
+          ],
+          color: Colors.white,
+          buttonBackgroundColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 600),
+          onTap: (index) {
+            setState(() {
+              _page = index;
+            });
+          },
+        ),
+      body: 
+      Container(
+        margin: EdgeInsets.only(top: 16),
+        child: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.bottomCenter,
+                child: _buildBottomCard(width, height)
+            ),
+      Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         
         children: <Widget>[
        
               SizedBox(
-            height: 100,
+            height: 55,
           ),
-          Text(
-            "My Volunteer Board",
-            style: TextStyle(
-              fontSize: 24,
-              // color:Colors.white,
-              fontWeight: FontWeight.bold,
-              inherit: true,
-              letterSpacing: 0.4,
-            ),
-          ),
+       
+        GradientText(
+  "POCKET DIARY",
+  shaderRect: Rect.fromLTWH(0.0, 0.0, 50.0, 50.0),
+   gradient: LinearGradient(
+          colors: [const Color(0xFF667eea  ),const Color(0xFF764ba2) ]
+        ),
+  style: TextStyle(fontSize: 40.0,),
+),
+        
             SizedBox(
-            height: 20,
+            height: 10,
           ),
              Container(
                   margin: EdgeInsets.only(left: 15, bottom : 0),
@@ -160,6 +258,9 @@ class _YSRMainScreen extends State<YSRMainScreen> {
                 ),
         ],
       ),
+          ]
+        )
+        )
     );
   }
 
@@ -199,7 +300,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.person,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -215,7 +316,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.person_add,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -229,7 +330,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.star,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -244,7 +345,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.person,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -258,7 +359,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.insert_chart,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -272,7 +373,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.cloud,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -286,7 +387,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.people,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -300,7 +401,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.bug_report,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -314,7 +415,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
     return    IconButton(
             icon: Icon(
               Icons.phone,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
@@ -328,7 +429,7 @@ class _YSRMainScreen extends State<YSRMainScreen> {
         return    IconButton(
             icon: Icon(
               Icons.exit_to_app,
-              color: Colors.blue,
+              color: Colors.white,
             ),
             onPressed: () {
               print("add money");
