@@ -116,7 +116,7 @@ Widget esclationClose() =>  Padding(
               names.sort((a, b) => a.firstName.compareTo(b.firstName));
             });
           },
-          tooltip: "To display first name of the Name",
+          tooltip: "To display First name of the Name",
         ),
         DataColumn(
           label: Text("Completed On"),

@@ -54,7 +54,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
-        hintText: 'First Name',
+        hintText: 'First name',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),

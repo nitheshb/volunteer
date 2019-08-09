@@ -7,9 +7,11 @@ import 'package:test_app_1/pages/issueDetails.dart';
 import 'package:test_app_1/pages/leaderPage.dart';
 import 'package:test_app_1/pages/myProfileP.dart';
 import 'package:test_app_1/pages/opinionPollReport.dart';
+import 'package:test_app_1/pages/pollsCollector.dart';
 import 'package:test_app_1/pages/razorPayHome.dart';
 import 'package:test_app_1/pages/scratch_card.dart';
 import 'package:test_app_1/pages/statsHome.dart';
+import 'package:test_app_1/pages/stepProgressForm.dart';
 import 'package:test_app_1/pages/superviserDash.dart';
 import 'package:test_app_1/pages/volunteerStats.dart';
 import 'package:test_app_1/pages/wallet_home.dart';
@@ -27,6 +29,7 @@ import 'package:test_app_1/ui/screens/sign_up.dart';
 import 'package:test_app_1/ui/screens/forgot_password.dart';
 import 'package:test_app_1/pages/Admin/add_matches_P.dart';
 import 'package:test_app_1/services/authentication.dart';
+import 'package:test_app_1/utils/pushMsgHandler.dart';
 
 import 'model/todo.dart';
 
@@ -60,6 +63,7 @@ class MyApp extends StatelessWidget {
         '/volunteerDash': (context) => MyProfilePage(),
         '/volunteerStats': (context) => VolunteerStats(),
         '/addFamily': (context) => AddFamily(),
+        '/stepProgressForm': (context) => StepProgressForm(),
         '/addIssue': (context) => AddIssue(),
         '/addScheme': (context) => TodoDetail(Todo('', 3, '')),
         '/leaderView': (context) => LeaderView(),
@@ -67,6 +71,8 @@ class MyApp extends StatelessWidget {
         '/superviseDash': (context) => SupervisorDash(),
         '/liveStatsHome': (context) => StatsHome(),
         '/opinionPool': (context) => OpinionPollDash(),
+        '/PollsCollector': (context) =>PollsCollector(),
+        '/MessageHandler': (context) => MessageHandler(),
         '/oldHome': (context) => HomeScreen(),
         '/signin': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),

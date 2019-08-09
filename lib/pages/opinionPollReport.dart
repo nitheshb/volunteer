@@ -601,7 +601,12 @@ class _SupervisorDashState extends State<OpinionPollDash> {
   Widget colorCard(
       String text, String text2, double amount, int type, BuildContext context, Color color) {
     final _media = MediaQuery.of(context).size;
-    return Container(
+    return new GestureDetector(
+        onTap: (){
+          Navigator.pushNamed(context, '/PollsCollector');
+          print("Container clicked");
+        },
+    child: Container(
       margin: EdgeInsets.only(top: 15, right: 15),
       padding: EdgeInsets.all(15),
       height: 180,
@@ -735,7 +740,9 @@ class _SupervisorDashState extends State<OpinionPollDash> {
                                   ),
                                 
                                       ],
+     
                                     ),
+    )
     );
   }
 

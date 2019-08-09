@@ -15,7 +15,7 @@ var menuData = [
 {'name': 'Opinion Polls', 'routeString': '/opinionPool'},
 {'name': 'Issues', 'routeString': '/volunteerDash'},
 {'name': 'Aspriants', 'routeString': '/volunteerDash'},
-{'name': 'Corruption', 'routeString': '/superviseDash'},
+{'name': 'Corruption', 'routeString': '/MessageHandler'},
 {'name': 'Toll Free', 'routeString': '/smartMenu'},
 ];
 
@@ -348,13 +348,14 @@ int _page = 0;
               color: Colors.white,
             ),
             onPressed: () {
-              print("add money");
+              print("add money $routeUrl");
                   Navigator.pushNamed(context, routeUrl);
               //  _showDialog(dispText);
             },
             iconSize: 40.0,
           );
     }
+    
     else if (checkText == 'Opinion Polls'){
     return    IconButton(
             icon: Icon(
@@ -404,7 +405,7 @@ int _page = 0;
               color: Colors.white,
             ),
             onPressed: () {
-              print("add money");
+              print("add money $routeUrl");
                   Navigator.pushNamed(context, routeUrl);
               //  _showDialog(dispText);
             },

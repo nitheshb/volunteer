@@ -316,7 +316,7 @@ String url = 'https://ms-azure-endpoints.azurewebsites.net/getFanTeams';
                     // final settingsId = appState?.settings?.settingsId ?? '';
                     // final userIdLabel = Text('App Id: ');
                     // final emailLabel = Text('Email: ');
-                    // final firstNameLabel = Text('First Name: ');
+                    // final firstNameLabel = Text('First name: ');
                     // final lastNameLabel = Text('Last Name: ');
                     // final settingsIdLabel = Text('SetttingsId: ');
               

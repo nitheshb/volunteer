@@ -12,10 +12,6 @@ import 'package:test_app_1/widgets/percent_indicator.dart';
 import 'package:test_app_1/widgets/user_card.dart';
 import 'package:test_app_1/widgets/wave_progress.dart';
 
-
-
-
-  
 var data = [
   new DataPerItem('Home', 35, Colors.greenAccent),
   new DataPerItem('Food & Drink', 25, Colors.yellow),
@@ -33,14 +29,13 @@ var series = [
   ),
 ];
 
-class StatsHome extends StatefulWidget {
+class PollsCollector extends StatefulWidget {
 
   @override
-  _MyProfilePageState createState() => _MyProfilePageState();
+  _SupervisorDashState createState() => _SupervisorDashState();
 }
 
-class _MyProfilePageState extends State<StatsHome> {
-
+class _SupervisorDashState extends State<PollsCollector> {
    bool showTextField = false;
 
   TextEditingController controller = TextEditingController();
@@ -59,25 +54,14 @@ class _MyProfilePageState extends State<StatsHome> {
 
   TextEditingController _teamId = TextEditingController();
 
-  String collectionName = "Matches";
-  String collectionName1 = "Issues";
+  String collectionName = "Volunteers";
 
   bool isEditing = false;
 
-  String dataSelect = "Houses";
-
   MatchesI curMatche;
-  void initState() {
-    dataSelect = "Houses"; 
-    super.initState();
-  }
 
   getMatches() {
-    if(dataSelect == "Houses"){
     return Firestore.instance.collection(collectionName).snapshots();
-    }else {
-       return Firestore.instance.collection(collectionName1).snapshots();
-    }
   }
 
   addMatche() {
@@ -127,106 +111,18 @@ class _MyProfilePageState extends State<StatsHome> {
     );
   }
 
-  // old Issues body
-
- Widget bodyTableData() => DataTable(
-      onSelectAll: (b) {},
-      sortColumnIndex: 1,
-      sortAscending: true,
-      columns: <DataColumn>[
-        DataColumn(
-          label: Text("District", style: TextStyle(fontSize: 20.0),),
-          numeric: false,
-          onSort: (i, b) {
-            print("$i $b");
-            setState(() {
-              names.sort((a, b) => a.firstName.compareTo(b.firstName));
-            });
-          },
-          tooltip: "To display First name of the Name",
-        ),
-        DataColumn(
-          label: Text("Open Issues", style: TextStyle(fontSize: 20.0)),
-          numeric: false,
-          onSort: (i, b) {
-            print("$i $b");
-            setState(() {
-              names.sort((a, b) => a.lastName.compareTo(b.lastName));
-            });
-          },
-          tooltip: "To display last name of the Name",
-        ),
-        DataColumn(
-          label: Text("Closed Issues", style: TextStyle(fontSize: 20.0)),
-          numeric: false,
-          onSort: (i, b) {
-            print("$i $b");
-            setState(() {
-              names.sort((a, b) => a.lastName.compareTo(b.lastName));
-            });
-          },
-          tooltip: "To display last name of the Name",
-        ),
-      ],
-      rows: names
-          .map(
-            (name) => DataRow(
-                  cells: [
-                    DataCell(
-                      Text(name.firstName),
-                      showEditIcon: false,
-                      placeholder: false,
-                    ),
-                    DataCell(
-                      Text(name.lastName),
-                      showEditIcon: false,
-                      placeholder: false,
-                    ),
-                    DataCell(
-                      Text(name.closedTickets.toString()),
-                      showEditIcon: false,
-                      placeholder: false,
-                    )
-                  ],
-                ),
-          )
-          .toList());
+  
 
   Widget buildUserTile(BuildContext contex, DocumentSnapshot user) {
     print("data is ${user.data}");
-  return  dataSelect == "Issues" ?
-     buildListItem(
-            context,
-            user.data['title'],
-            200,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
-          ) : vaweCard (
-            context,
-            user.data['title'],
-            "Ward-8,pantasteet,Atmakur",
-            200,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
-          );
-
-
-
-          
-
-  }
-   Widget buildIssueTile(BuildContext contex, DocumentSnapshot user) {
-    print("data is ${user.data}");
     return vaweCard(
             context,
-            user.data['title'],
-            "Ward-8,pantasteet,Atmakur",
-            200,
+            user.data['Name'],
+            user.data['Address'],
+            int.parse(user.data['Issues']),
             1,
             Colors.grey.shade100,
-            Colors.red,
+            Color(0xFFff596b),
           );
 
   }
@@ -240,8 +136,6 @@ class _MyProfilePageState extends State<StatsHome> {
         }
         if (snapshot.hasData) {
           print("Documents ${snapshot.data.documents.length}");
-          List snData = snapshot.data.documents;
-
         // return  ListTile(
         //     title: Text("fhdfkdfdfk"),
         //   );
@@ -252,7 +146,8 @@ class _MyProfilePageState extends State<StatsHome> {
             padding: EdgeInsets.zero,
             itemExtent: 80.0,
             itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) =>            buildUserTile(context,snapshot.data.documents[index] ),
+            itemBuilder: (context, index) =>
+            buildUserTile(context,snapshot.data.documents[index] ),
           );
           // return buildList(context, snapshot.data.documents);
         }
@@ -267,7 +162,7 @@ class _MyProfilePageState extends State<StatsHome> {
     // );
   }
 
-  Widget buildListItem(BuildContext context, String name, double amount, int type,
+   Widget buildListItem(BuildContext context, String name, double amount, int type,
       Color fillColor, Color bgColor) {
     // final user = MatchesI.fromSnapshot(data);
     return Padding(
@@ -309,41 +204,6 @@ class _MyProfilePageState extends State<StatsHome> {
                       TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
-                            labelText: "సమస్య", hintText: "pension"),
-                      ),
-                      TextFormField(
-                        controller: _prize,
-                        decoration: InputDecoration(
-                            labelText: "PersonId", hintText: "atk12345"),
-                      ),
-                      TextFormField(
-                        controller: _fee,
-                        decoration: InputDecoration(
-                            labelText: "Description", hintText: "Reason about issue"),
-                      ),
-                       TextFormField(
-                        controller: _date,
-                        decoration: InputDecoration(
-                            labelText: "Date", hintText: "Match Date"),
-                      ),
-                       TextFormField(
-                        controller: _status,
-                        decoration: InputDecoration(
-                            labelText: "Status", hintText: "ongoing/closed/open,waiting"),
-                      ),
-                      // button(),
-                    ],
-                  );
-    }
-
-      Widget memberbuildForm(BuildContext context) {
-     return   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      TextFormField(
-                        controller: controller,
-                        decoration: InputDecoration(
                             labelText: "Name", hintText: "Name"),
                       ),
                       TextFormField(
@@ -371,47 +231,18 @@ class _MyProfilePageState extends State<StatsHome> {
                   );
     }
 // user defined function
-  void _showDialog(dilogCategory) {
+  void _showDialog() {
     // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
-        return dilogCategory == "Add Issues1" ? AlertDialog(
-          title: new Text("Create Issue",style: TextStyle(
+        return AlertDialog(
+          title: new Text("Create New volunteer",style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         )),
-          content:  buildForm(context),
-          actions: <Widget>[
-
-            
-            // usually buttons at the bottom of the dialog
-            Row(
-              children: <Widget>[
-
-                
-                new FlatButton(
-                  child: new Text("Save"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                new FlatButton(
-                  child: new Text("Close"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ],
-        ) : AlertDialog(
-          title: new Text(dilogCategory,style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        )),
-          content: memberbuildForm(context),
+          content: buildForm(context),
           actions: <Widget>[
 
             
@@ -436,7 +267,6 @@ class _MyProfilePageState extends State<StatsHome> {
             ),
           ],
         );
-
       },
     );
   }
@@ -460,6 +290,7 @@ class _MyProfilePageState extends State<StatsHome> {
             showTextField = false;
           });
         },
+        
       ),
     );
   }
@@ -479,7 +310,7 @@ class _MyProfilePageState extends State<StatsHome> {
             height: 0,
           ),
           Text(
-            "Reports",
+            "Polls",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -487,36 +318,39 @@ class _MyProfilePageState extends State<StatsHome> {
               letterSpacing: 0.4,
             ),
           ),
-      
-          SizedBox(
-            height: 30,
+          Row(
+            children: <Widget>[
+              colorCard("Ration: Old Rice vs New Rice","do you like the quality of new rice?", 35.170, 1, context, Colors.greenAccent),
+              
+              // colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
+            ],
           ),
-                 Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                      },
-                      child: ListView.builder(
-                        physics: ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: 1,
-                        itemBuilder: (BuildContext context, int index) {
-                          return bodyTableData();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              SizedBox(height: 10.0,),
-
+          Row(
+            children: <Widget>[
+              colorCard1("Money vs Coupons ","vs  Delivery vs Old Method", 35.170, 1, context, Colors.greenAccent),
+              
+              // colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              colorCard("quantity of rice is good ?", "",35.170, 1, context, Colors.greenAccent),
+              
+              // colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+           
+  
+                
+           SizedBox(height: 20.0,),
           RichText(
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "Ticket Stats",
+                  text: "Provide Awareness",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 24,
@@ -525,7 +359,7 @@ class _MyProfilePageState extends State<StatsHome> {
                   ),
                 ),
                 TextSpan(
-                  text: "July 2019",
+                  text: "    July 2018",
                   style: TextStyle(
                     color: Colors.grey.shade400,
                     fontWeight: FontWeight.w700,
@@ -574,63 +408,97 @@ class _MyProfilePageState extends State<StatsHome> {
                       SizedBox(
                         height: 15,
                       ),
-                      donutCard(Colors.indigo, "Aadhar"),
-                      donutCard(Colors.yellow, "Badi Bata"),
-                      donutCard(Colors.greenAccent, "Arogya Sri"),
-                      donutCard(Colors.pinkAccent, "open Issues"),
+                      donutCard(Colors.indigo, "Women"),
+                      donutCard(Colors.yellow, "Men"),
+                      donutCard(Colors.greenAccent, "Old age"),
+                      donutCard(Colors.pinkAccent, "Children"),
                     ],
                   ),
                 )
+
               ],
             ),
           ),
           SizedBox(
             height: 30,
           ),
-          Text(
-            "Open Issues",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              inherit: true,
-              letterSpacing: 0.4,
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "Budgets",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Varela",
+                  ),
+                ),
+                TextSpan(
+                  text: "    July",
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    fontFamily: "Varela",
+                  ),
+                ),
+              ],
             ),
           ),
-          vaweCard(
-            context,
-            "Oldage Pension Not Received",
-            "Esclated To Incharge",
-            200,
-            1,
-            Colors.grey.shade100,
-            Color(0xFF716cff),
+          Container(
+            margin: EdgeInsets.only(
+              top: 15,
+              right: 20,
+            ),
+            padding: EdgeInsets.all(10),
+            height: screenAwareSize(45, context),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade100,
+                  blurRadius: 6,
+                  spreadRadius: 10,
+                )
+              ],
+            ),
+            child: LinearPercentIndicator(
+              width: screenAwareSize(
+                  _media.width - (_media.longestSide <= 775 ? 100 : 160),
+                  context),
+              lineHeight: 20.0,
+              percent: 0.68,
+              backgroundColor: Colors.grey.shade300,
+              progressColor: Color(0xFF1b52ff),
+              animation: true,
+              animateFromLastPercent: true,
+              alignment: MainAxisAlignment.spaceEvenly,
+              animationDuration: 1000,
+              linearStrokeCap: LinearStrokeCap.roundAll,
+              center: Text(
+                "68.0%",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
-          vaweCard(
-            context,
-            "New Badi Bata Application",
-            "Application Submitted by Volunteer",
-            10,
-            -1,
-            Colors.grey.shade100,
-            Color(0xFFff596b),
-          ),
-          vaweCard(
-            context,
-            "Arogya Sri Approval",
-            "Pending at Grama Sachivalayam",
-            200,
-            -1,
-            Colors.grey.shade100,
-            Color(0xFFff596b),
-          ),
+         
+        
         ],
       ),
     );
   }
 
-  Widget vaweCard(BuildContext context, String name, String status, double amount, int type,
-      Color fillColor, Color bgColor) {
-    return Container(
+  Widget vaweCard(BuildContext context, String name, String address, int amount, int type,
+      Color fillColor, Color bgColor1) {
+
+        var bgColor = amount == 0 ?  Colors.greenAccent : Color(0xFFff596b) ;
+    return GestureDetector(
+  onTap: () {
+    Navigator.pushNamed(context, '/volunteerStats');
+  },
+  child:  Container(
       margin: EdgeInsets.only(
         top: 5,
         right: 20,
@@ -659,12 +527,16 @@ class _MyProfilePageState extends State<StatsHome> {
                 screenAwareSize(45, context),
                 fillColor,
                 bgColor,
-                67,
+                0,
               ),
               Text(
-                "80%",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                amount.toString(),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                )
+               
               ),
             ],
           ),
@@ -678,28 +550,23 @@ class _MyProfilePageState extends State<StatsHome> {
               Text(
                 name,
                 style:
-                    TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
               ),
               SizedBox(
                 height: 8,
               ),
               Text(
-                status,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
+                "${address.toString()}",
+                 style:
+                    TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
               )
             ],
-          ),
-          
+          )
         ],
       ),
+    )
     );
   }
-
-
 
   Widget donutCard(Color color, String text) {
     return Row(
@@ -734,7 +601,7 @@ class _MyProfilePageState extends State<StatsHome> {
   }
 
   Widget colorCard(
-      String text, double amount, int type, BuildContext context, Color color) {
+      String text, String text2, double amount, int type, BuildContext context, Color color) {
     final _media = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.only(top: 15, right: 15),
@@ -765,33 +632,24 @@ class _MyProfilePageState extends State<StatsHome> {
                   Container(
                     child:Row(
                       children: <Widget>[
-                        Container(
-                          height: 60.0,
-                          width: 60.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            image: DecorationImage(
-                              image: NetworkImage('http://t1.gstatic.com/images?q=tbn:ANd9GcR_XkfDWQpnP4FqejGDaDo4xBXo9dFzLJgrQH0-HWdyG9-mhiBDP_Gx311LYemlGyOUt15_1vk'),
-                              fit: BoxFit.cover
-                            )
-                          ),
-                        ),
+                       
                         SizedBox(width: 5.0),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text('Arjuna',
+                            Text(text, 
                             style: TextStyle(
-                              fontSize: 22.0,
-                              color: Colors.white,
+                              fontSize: 16.0,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold
                             )
                             ),
                             SizedBox(height: 5.0),
-                            Text('Panta Street, Atmakur...',
+                            Text(text2,
                             style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.white
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold
                             )
                             )
                           ],
@@ -804,136 +662,225 @@ class _MyProfilePageState extends State<StatsHome> {
                                       SizedBox(height: 15.0),
                                       Row(
                                         children: <Widget>[
-                                          GestureDetector(
-  onTap: () {
-    print("issues is tapped");
-    setState(() {
-      dataSelect = "Houses"; 
-    });
-  },
-  child: 
-                                           new Container(
-                                             height: 58.0,
-                                        width: 100.0,
-     color:dataSelect == "Houses" ? Colors.white :  Color(0xFF1b5bff),
-    child:
                                           Column(
                                             children: <Widget>[
-                                             SizedBox(height: 5.0),
-                                              Text(
-                                                '7',
-                                                style: TextStyle(
-                                                    fontFamily: 'Montserrat',
-                                                    fontSize: 20.0,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                         color: dataSelect == "Houses" ?  Color(0xFF1b5bff): Colors.white),
-                                              ),
+                                             
+                                              IconButton(
+            icon: Icon(Icons.thumb_up),
+            color: Colors.red,
+            iconSize: 30,
+            onPressed: () {
+              // deleter
+              // delete(user);
+            },
+          ),
                                               SizedBox(height: 7.0),
-                                  Text(
-                                                'Houses',
+                                              Text(
+                                                'Yes',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
-                                                  color: dataSelect == "Houses" ?  Color(0xFF1b5bff): Colors.white
+                                                  color: Colors.white
                                                 ),
-                                              ),
-                                              SizedBox(height: 2.0),
-                                              
-                                              
+                                              )
                                             ],
                                           ),
-                                           )
-                                              ),
                                           SizedBox(width: 25.0),
-                                              GestureDetector(
-  onTap: () {
-    print("issues is tapped");
-    setState(() {
-      dataSelect = "Issues"; 
-    });
-  },
-  child: 
-                                           new Container(
-                                             height: 58.0,
-                                        width: 100.0,
-     color:dataSelect == "Issues" ? Colors.white : Color(0xFF1b5bff),
-    child:
                                           Column(
                                             children: <Widget>[
-                                             SizedBox(height: 5.0),
-                                              Text(
-                                                '2',
-                                                style: TextStyle(
-                                                    fontFamily: 'Montserrat',
-                                                    fontSize: 20.0,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                        color: dataSelect == "Issues" ?  Color(0xFF1b5bff): Colors.white ),
-                                              ),
+                                             IconButton(
+            icon: Icon(Icons.thumb_down),
+            color: Colors.red,
+            iconSize: 30,
+            onPressed: () {
+              // deleter
+              // delete(user);
+            },
+          ),
                                               SizedBox(height: 7.0),
-                                  Text(
-                                                'Issues',
+                                              Text(
+                                                'No',
                                                 style: TextStyle(
                                                   fontFamily: 'Montserrat',
                                                   fontSize: 16.0,
-                                                  color: dataSelect == "Issues" ?  Color(0xFF1b5bff): Colors.white
+                                                  color: Colors.white
                                                 ),
-                                              ),
-                                              SizedBox(height: 2.0),
-                                              
-                                              
+                                              )
                                             ],
                                           ),
-                                           )
-                                              ),
-                                          SizedBox(width: 25.0),
-                                          
-                                                        ],
+                                           SizedBox(width: 25.0),
+                                          Column(
+                                            children: <Widget>[
+                                              IconButton(
+            icon: Icon(Icons.thumbs_up_down),
+            color: Colors.red,
+            iconSize: 30,
+            onPressed: () {
+              // deleter
+              // delete(user);
+            },
+          ),
+                                              SizedBox(height: 7.0),
+                                              Text(
+                                                'Not Interested',
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  fontSize: 16.0,
+                                                  color: Colors.white
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        
+                                        ],
                                       )
                                     ],
                                   ),
-                                  Column(
+                                
+                                      ],
+                                    ),
+    );
+  }
+
+
+ Widget colorCard1(
+      String text, String text2, double amount, int type, BuildContext context, Color color) {
+    final _media = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.only(top: 15, right: 15),
+      padding: EdgeInsets.all(15),
+      height: 180,
+      width: _media.width - 40,
+      decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+                color: color.withOpacity(0.4),
+                blurRadius: 16,
+                spreadRadius: 0.2,
+                offset: Offset(0, 8)),
+          ]),
+      child:Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       SizedBox(height: 15.0),
                                       Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    child:Row(
+                      children: <Widget>[
+                       
+                        SizedBox(width: 5.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(text, 
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold
+                            )
+                            ),
+                            SizedBox(height: 5.0),
+                            Text(text2,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold
+                            )
+                            )
+                          ],
+                        )
+                      ],
+                    )
+                  ),
+                ],
+              ),
+                                      SizedBox(height: 15.0),
+                                      Row(
                                         children: <Widget>[
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                            size: 15.0,
+                                          Column(
+                                            children: <Widget>[
+                                             
+                                              IconButton(
+            icon: Icon(Icons.thumb_up),
+            color: Colors.red,
+            iconSize: 30,
+            onPressed: () {
+              // deleter
+              // delete(user);
+            },
+          ),
+                                              SizedBox(height: 7.0),
+                                              Text(
+                                                'Money Benifit',
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  fontSize: 16.0,
+                                                  color: Colors.white
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          Text(
-                                            '4.9',
-                                            style: TextStyle(
-                                                fontFamily: 'Montserrat',
-                                                fontSize: 14.0,
-                                                color: Colors.amber,
-                                                fontWeight: FontWeight.bold),
-                                          )
+                                          SizedBox(width: 25.0),
+                                          Column(
+                                            children: <Widget>[
+                                             IconButton(
+            icon: Icon(Icons.thumb_up),
+            color: Colors.red,
+            iconSize: 30,
+            onPressed: () {
+              // deleter
+              // delete(user);
+            },
+          ),
+                                              SizedBox(height: 7.0),
+                                              Text(
+                                                'Coupons',
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  fontSize: 16.0,
+                                                  color: Colors.white
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                           SizedBox(width: 25.0),
+                                          Column(
+                                            children: <Widget>[
+                                              IconButton(
+            icon: Icon(Icons.thumb_up),
+            color: Colors.red,
+            iconSize: 30,
+            onPressed: () {
+              // deleter
+              // delete(user);
+            },
+          ),
+                                              SizedBox(height: 7.0),
+                                              Text(
+                                                ' Packets',
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  fontSize: 16.0,
+                                                  color: Colors.white
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          
+                                        
                                         ],
-                                      ),
-                                      SizedBox(height: 20.0),
-                                      Container(
-                                        height: 30.0,
-                                        width: 30.0,
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFF2560FA),
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        child: Center(
-                                       child:   GestureDetector(
-  onTap: () {
-    Navigator.pushNamed(context, '/superviseDash');
-  },
-  child: Icon(Icons.send,
-  color: Colors.white, size: 14.0),
-),
-                     
-                                        ),
                                       )
                                     ],
-                                  )
+                                  ),
+                                
                                       ],
                                     ),
     );
@@ -949,7 +896,7 @@ class _MyProfilePageState extends State<StatsHome> {
         borderRadius: BorderRadius.circular(8.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.lightBlue.shade50,
+            color: Colors.pink.shade50,
             blurRadius: 8.0,
             spreadRadius: 4,
           ),
@@ -966,19 +913,16 @@ class _MyProfilePageState extends State<StatsHome> {
           IconButton(
             icon: Icon(
               Icons.add_circle,
-              color: Colors.blue,
+              color: Colors.pinkAccent,
             ),
             onPressed: () {
               print("add money");
-
-               if( dispText == "Add Issues") {
-                  Navigator.pushNamed(context, '/addIssue');
-               }else {
-                  Navigator.pushNamed(context, '/addFamily');
-               }
+              // Navigator.pushNamed(context,'/razorPay_home');
+              
+    // Navigator.pushNamed(context, '/dashboardYsr');
   
-              //  _showDialog(dispText);
-             
+              _showDialog();
+              // Navigator.pushNamed(context,'/scratchCard');
             },
             iconSize: 40.0,
           ),
@@ -996,18 +940,3 @@ class _MyProfilePageState extends State<StatsHome> {
     );
   }
 }
-
-
-class Name {
-  String firstName;
-  String lastName;
-  int closedTickets;
-
-  Name({this.firstName, this.lastName, this.closedTickets});
-}
-
-var names = <Name>[
-  Name(firstName: "Guntur", lastName: "100", closedTickets: 100),
-  Name(firstName: "Nellore", lastName: "0", closedTickets: 101),
-  Name(firstName: "ysr Cuddapah", lastName: "30", closedTickets: 102),
-];

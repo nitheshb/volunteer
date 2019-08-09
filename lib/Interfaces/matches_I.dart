@@ -63,3 +63,5 @@ class LiveBidI {
     return {'bidId': bidId,'maxPlayers': maxPlayers, 'positions': positions, 'sportPlayerIndex': currentBidPlayerIndex, 'skippedPlayers': skippedPlayer,'matchId': matchId, 'bid_type': bidType, 'team': team, 'bidders': bidders, "bidderDetails": bidderDetails };
   }
 }
+
+
